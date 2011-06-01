@@ -39,7 +39,7 @@ function globalP(p) {
 	p.draw = function() {
         p.background(0);
         updateInputTree();
-        //drawInputTree();
+        drawInputTree();
 		drawCounter++;
 		drawCounter = drawCounter % 240;
 	};
@@ -97,6 +97,116 @@ function updateInputTree() {
     }
 }
 
+function drawInputTree() {
+    p.stroke(255);
+    p.noFill();
+    
+    drawParagraph(inputTree);
+}
+
+function drawParagraph(input) {
+    for (var i=0;i<input.length;i++) {
+        if (input[i] == "") {
+            continue;
+        }
+
+        if (i==0) {
+            drawPhrase(input[0]);
+        }
+    }
+}
+
+function drawPhrase(input) {
+    for (var i=0;i<input.length;i++) {
+        if (input[i] == "") {
+            continue;
+        }
+
+        drawWord(input[i]);
+    }
+}
+
+function drawWord(input) {
+    var scaleX = 1;
+    var scaleY = 1;
+
+    var posX = 0;
+    var posY = 0;
+
+    var iCorrection = 0;
+    var trueI = 0;
+
+    for (var i=0;i<input.length;i++) {
+        trueI = i+iCorrection;
+        switch(trueI) {
+            case 1:
+                scaleX = alpha[input[i]].num;
+                break;
+            case 2:
+                scaleX += 26 * alpha[input[i]].num;
+                break;
+            case 3:
+                scaleX += 26*26 * alpha[input[i]].num;
+                break;
+            case 4:
+                scaleX += 26*26*26 * alpha[input[i]].num;
+                break;
+            case 5:
+                scaleY = alpha[input[i]].num;
+                break;
+            case 6:
+                scaleY += 26 * alpha[input[i]].num;
+                break;
+            case 7:
+                scaleY += 26*26 * alpha[input[i]].num;
+                break;
+            case 8:
+                scaleY += 26*26*26 * alpha[input[i]].num;
+                break;
+            case 9:
+                posX = alpha[input[i]].num;
+                break;
+            case 10:
+                posX += 26 * alpha[input[i]].num;
+                break;
+            case 11:
+                posX += 26*26 * alpha[input[i]].num;
+                break;
+            case 12:
+                posX += 26*26*26 * alpha[input[i]].num;
+                break;
+            case 13:
+                posY = alpha[input[i]].num;
+                break;
+            case 14:
+                posY += 26 * alpha[input[i]].num;
+                break;
+            case 15:
+                posY += 26*26 * alpha[input[i]].num;
+                break;
+            case 16:
+                posY += 26*26*26 * alpha[input[i]].num;
+                break;
+        }
+        if (alpha[input[i]].isCapital && i>0) {
+            if (trueI<5) {
+                iCorrection = 4-trueI;
+            } else if (trueI<8) {
+                iCorrection += 8-trueI;
+            } else if (trueI<12) {
+                iCorrection += 12-trueI;
+            }
+        }
+    }
+
+    p.line(alpha[input[0]].path1+posX,
+            alpha[input[0]].path2+posY,
+            alpha[input[0]].path3*10*scaleX+posX,
+            alpha[input[0]].path4*10*scaleY+posY);
+
+}
+
+/*
 function drawInputTree() {
     p.stroke(255);
     p.noFill();
@@ -183,3 +293,4 @@ function drawInputTree() {
                 alpha[inputTree[i][0]].path4*10*scaleY+posY);
     }
 }
+*/
