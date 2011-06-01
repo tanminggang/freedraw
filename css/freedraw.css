@@ -1,0 +1,42 @@
+html {
+	position:static;
+	background:rgb(0,0,0);
+}
+body {
+	position:static;
+	background:rgb(105,0,0);
+}
+canvas {
+	position:absolute;
+}
+p {
+    position:absolute;
+	font-size:16px;
+	font-family:monospace;
+}
+
+#input {
+	color:rgba(0,0,0,255);
+	position:absolute;
+	left:230px;
+	top:14px;
+	height:30px;
+	width:950px;
+	font-size:20px;
+	font-family:monospace;
+	background:white;
+	border:0px;
+}
+#inputLabel {
+	position:absolute;
+    color:white;
+	left:10px;
+	top:20px;
+	font-size:18px;
+}
+
+#globalCanvas{
+    position:absolute;
+	left:0px;
+	top:60px;
+}

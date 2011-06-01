@@ -1,0 +1,185 @@
+// freedraw
+// toimawb
+// vijay rudraraju
+// may 27 2011
+
+Object.prototype.clone = function() {
+    var newObj = (this instanceof Array) ? [] : {};
+    for (i in this) {
+        if (i == 'clone') continue;
+        if (this[i] && typeof this[i] == "object") {
+            newObj[i] = this[i].clone();
+        } else newObj[i] = this[i]
+    } return newObj;
+};
+
+var screenWidth = 1280;
+var screenHeight = 800;
+var mX = 0; 
+var mY = 0;
+var drawCounter = 0;
+
+function globalP(p) {
+	p.mouseMoved = function() {
+		mX = p.mouseX;
+		mY = p.mouseY;
+	};
+
+	p.mouseClicked = function() {
+	};
+
+	p.setup = function() {
+		//p.println(p.PFont.list());
+
+		p.size(screenWidth,screenHeight);
+		var font = p.loadFont("monospace");
+		p.textFont(font);
+	};
+
+	p.draw = function() {
+        p.background(0);
+        updateInputTree();
+        //drawInputTree();
+		drawCounter++;
+		drawCounter = drawCounter % 240;
+	};
+}
+
+var p;
+$(document).ready(function() {
+		p = new Processing($('#globalCanvas')[0], globalP);
+});
+
+var alpha = {};
+alpha.a = {path1:0,
+    path2:0,
+    path3:1,
+    path4:0,
+    num:0};
+alpha.A = alpha.a.clone();
+alpha.A.isCapital = true;
+alpha.b = {path1:0,
+    path2:0,
+    path3:0,
+    path4:1,
+    num:1};
+alpha.B = alpha.b.clone();
+alpha.B.isCapital = true;
+alpha.c = {path1:0,
+    path2:0,
+    path3:1,
+    path4:1,
+    num:2};
+alpha.C = alpha.c.clone();
+alpha.C.isCapital = true;
+alpha.d = {path1:0,
+    path2:0,
+    path3:1,
+    path4:1,
+    num:3};
+alpha.D = alpha.d.clone();
+alpha.D.isCapital = true;
+alpha.e = {path1:0,
+    path2:0,
+    path3:1,
+    path4:1,
+    num:4};
+alpha.E = alpha.e.clone();
+alpha.E.isCapital = true;
+
+var activeText = "";
+var inputTree = [];
+function updateInputTree() {
+	activeText = $('#input').val();
+    inputTree = activeText.split('.');
+    for (var i=0;i<inputTree.length;i++) {
+        inputTree[i] = inputTree[i].split(' ');
+    }
+}
+
+function drawInputTree() {
+    p.stroke(255);
+    p.noFill();
+
+    for (var i=0;i<inputTree.length;i++) {
+        if (inputTree[i] == "") {
+            continue;
+        }
+        var scaleX = 1;
+        var scaleY = 1;
+
+        var posX = 0;
+        var posY = 0;
+
+        var jCorrection = 0;
+        var trueJ = 0;
+
+        for (var j=0;j<inputTree[i].length;j++) {
+            trueJ = j+jCorrection;
+            switch(trueJ) {
+                case 1:
+                    scaleX = alpha[inputTree[i][j]].num;
+                    break;
+                case 2:
+                    scaleX += 26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 3:
+                    scaleX += 26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 4:
+                    scaleX += 26*26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 5:
+                    scaleY = alpha[inputTree[i][j]].num;
+                    break;
+                case 6:
+                    scaleY += 26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 7:
+                    scaleY += 26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 8:
+                    scaleY += 26*26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 9:
+                    posX = alpha[inputTree[i][j]].num;
+                    break;
+                case 10:
+                    posX += 26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 11:
+                    posX += 26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 12:
+                    posX += 26*26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 13:
+                    posY = alpha[inputTree[i][j]].num;
+                    break;
+                case 14:
+                    posY += 26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 15:
+                    posY += 26*26 * alpha[inputTree[i][j]].num;
+                    break;
+                case 16:
+                    posY += 26*26*26 * alpha[inputTree[i][j]].num;
+                    break;
+            }
+            if (alpha[inputTree[i][j]].isCapital && j>0) {
+                if (trueJ<5) {
+                    jCorrection = 4-trueJ;
+                } else if (trueJ<8) {
+                    jCorrection += 8-trueJ;
+                } else if (trueJ<12) {
+                    jCorrection += 12-trueJ;
+                }
+            }
+        }
+
+        p.line(alpha[inputTree[i][0]].path1+posX,
+                alpha[inputTree[i][0]].path2+posY,
+                alpha[inputTree[i][0]].path3*10*scaleX+posX,
+                alpha[inputTree[i][0]].path4*10*scaleY+posY);
+    }
+}
