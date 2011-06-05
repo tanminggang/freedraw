@@ -14,6 +14,7 @@ from cStringIO import StringIO
 import os
 
 html_file_path = os.getcwd()+'/html/freedraw.html'
+paintscript_file_path = os.getcwd()+'/html/paintscript.html'
 
 tracing = False
 
@@ -68,6 +69,11 @@ def handler_page(out, args):
     print >>out, html_file.read() 
     html_file.close()
 
+def handler_micro_page(out, args):
+    html_file = open(paintscript_file_path,'r')
+    print >>out, html_file.read() 
+    html_file.close()
+
 def handler_wait_command(out, args):
     pass
 
@@ -75,6 +81,7 @@ def handler_send_command(out, args):
     pass
 
 handlers = {'/': [handler_page, 'html'],
+            '/micro': [handler_micro_page, 'html'],
             '/wait_cmd': [handler_wait_command, 'json'],
             '/send_cmd': [handler_send_command, 'json']}
 

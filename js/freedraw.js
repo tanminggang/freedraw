@@ -48,20 +48,27 @@ function globalP(p) {
 var p;
 $(document).ready(function() {
 		p = new Processing($('#globalCanvas')[0], globalP);
+
+        alpha.a.path = p.line;
+        alpha.b.path = p.bezier;
 });
 
 var alpha = {};
 alpha.a = {path1:0,
     path2:0,
     path3:1,
-    path4:0,
+    path4:1,
     num:0};
 alpha.A = alpha.a.clone();
 alpha.A.isCapital = true;
 alpha.b = {path1:0,
     path2:0,
-    path3:0,
-    path4:1,
+    path3:0.25,
+    path4:0.25,
+    path5:0.75,
+    path6:0.75,
+    path7:1,
+    path8:1,
     num:1};
 alpha.B = alpha.b.clone();
 alpha.B.isCapital = true;
@@ -199,7 +206,7 @@ function drawWord(input) {
         }
     }
 
-    p.line(alpha[input[0]].path1+posX,
+    alpha[input[0]].path(alpha[input[0]].path1+posX,
             alpha[input[0]].path2+posY,
             alpha[input[0]].path3*10*scaleX+posX,
             alpha[input[0]].path4*10*scaleY+posY);
