@@ -1,127 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>paintscript</title>
-        <link rel="stylesheet" type="text/css" href="/css/nightingale.css"/>
-        <script type="text/javascript" src="/js/jquery-1.6.1.js"></script>
-        <script type="text/javascript" src="/js/nightingale.js"></script>
-        <script type="text/javascript" src="/js/sprintf.js"></script>
-        <script type="text/javascript" src="/js/editor.js"></script>
-        <script type="text/javascript" src="/js/jscolor.js"></script>
-        <script type="text/javascript">
-            $( document ).ready( function(  ) {
-
-                drawBackground(  )
-                drawFraming(  );
-                loadHandlers(  );
-
-				document.getElementById('innerWrapper').style.height = sprintf("%dpx", 1600 + 60);
+<head>
+    <title>paintscript</title>
+    <link rel="stylesheet" type="text/css" href="/css/editor.css"/>
+    <script type="text/javascript" src="/js/jquery-1.6.1.js"></script>
+    <script type="text/javascript" src="/js/nightingale.js"></script>
+    <script type="text/javascript" src="/js/sprintf.js"></script>
+    <script type="text/javascript" src="/js/editor.js"></script>
+    <script type="text/javascript" src="/js/jscolor.js"></script>
+    <script type="text/javascript">
+        $( document ).ready( function(  ) {
                 init();
                 jscolor.init();
-				
-            } );
-        </script>
-		<link href='http://fonts.googleapis.com/css?family=PT+Sans&subset=latin' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" type="text/css" href="/css/editor.css"/>
-    </head>
-    <body>
-        <div id="wrapper">
-        <div id="innerWrapper">
-        <canvas id="backgroundCanvas" width="800" height="1600"></canvas>
-        <canvas id="rightCanvas" width="160" height="660"></canvas>
-        <canvas id="bottomCanvas" width="800" height="60"></canvas>
-        <header id="headerTag">
-            <div id="title">
-                <h1>twilightnightingale</h1>
-            </div>
-            <div id="subtitle">
-                <h4>abstractions, delusions, tools, politics, money, love, death, and monkeys...lots of monkeys...with coconuts</h4>
-            </div>
-        </header>
-        <h3 id="tool_title">paintscript</h3>
-        <h4 id="tool_description">a tool for making procedural canvas drawing and animation less painful</h4>
-        <table id="canvasTable" width="800" height="740">
-            <tr>
-                <td>
-                    <canvas id="editorCanvas" width="390" height="620"></canvas>
-                </td>
-                <td>
-                    <textarea id="editorTextArea"></textarea>
-                </td>
-            </tr>
-        </table>    
-        <table id="buttonTable" width="800" height="180">
-            <tr>
-                <td>
-                    <input class="color 0" id="picker" value="#ff0000" style="background-color: rgb(256, 0, 0);" readOnly="true"/>
-                </td>
-                <td>
-                    <button id="noFill">no fill</button>
-                </td>
-                <td>
-                </td>
-                <td>
-                    <button id="scribble">scribble</button>
-                </td>
-                <td>
-                    <button id="clear">clear</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input class="color 1" id="fill_picker" value="#0000ff" style="background-color: rgb(0, 0, 256);" readOnly="true"/>
-                </td>
-                <td>
-                    <button id="fill">fill</button>
-                </td>
-                <td>
-                </td>
-                <td>
-                    <button id="quadratic">quadratic</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input class="color 2" id="gradient_picker" value="#00ff00" style="background-color: rgb(0, 256, 0);" readOnly="true"/>
-                </td>
-                <td>
-                    <button id="gradient">gradient</button>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-                <td>
-            </tr>
-            <tr>
-                <td>
-                    <canvas id="gradientCanvas" width="200" height="50"></canvas>
-                </td>
-                <td>
-                    <button id="addStop">add stop</button>
-                </td>
-                <td>
-                    <button id="clearGradient">clear gradient</button>
-                </td>
-                <td>
-                </td>
-                <td>
-                    <button id="execute">execute</button>
-                </td>
-            </tr>
-        </table>
-        <footer>
-            <div id="trailer">
-                <h5>&copy; 2010 vijay rudraraju</h5>
-                <h5>proud supporter of the foolish and misguided everywhere</h5>
-            </div>
-            <a id="twitter" href="http://www.twitter.com/vijayrudraraju"><img src="http://twitter-badges.s3.amazonaws.com/follow_bird-c.png" alt="Follow vijayrudraraju on Twitter"/></a>
-            <iframe id="facebook" src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.twilightnightingale.com&amp;layout=button_count&amp;show_faces=false&amp;width=50&amp;action=like&amp;font=lucida+grande&amp;colorscheme=dark&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
-            <a id="reddit" href="http://reddit.com/submit" onclick="window.location = 'http://reddit.com/submit?url=' + encodeURIComponent(window.location); return false"> <img src="http://reddit.com/static/spreddit6.gif" alt="submit to reddit" border="0" /> </a>
-        </footer>
-        </div>
-        </div>
-    </body>
+
+                } );
+    </script>
+</head>
+<body>
+<div id="wrapper">
+<div id="innerWrapper">
+<table id="canvasTable" width="800" height="740">
+    <tr>
+        <td>
+            <canvas id="editorCanvas" width="390" height="620"></canvas>
+        </td>
+        <td>
+            <textarea id="editorTextArea"></textarea>
+        </td>
+    </tr>
+</table>    
+<table id="buttonTable" width="800" height="180">
+    <tr>
+        <td>
+            <input class="color 0" id="picker" value="#ff0000" style="background-color: rgb(256, 0, 0);" readOnly="true"/>
+        </td>
+        <td>
+            <button id="noFill">no fill</button>
+        </td>
+        <td>
+        </td>
+        <td>
+            <button id="scribble">scribble</button>
+        </td>
+        <td>
+            <button id="clear">clear</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input class="color 1" id="fill_picker" value="#0000ff" style="background-color: rgb(0, 0, 256);" readOnly="true"/>
+        </td>
+        <td>
+            <button id="fill">fill</button>
+        </td>
+        <td>
+        </td>
+        <td>
+            <button id="quadratic">quadratic</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input class="color 2" id="gradient_picker" value="#00ff00" style="background-color: rgb(0, 256, 0);" readOnly="true"/>
+        </td>
+        <td>
+            <button id="gradient">gradient</button>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </tr>
+        <tr>
+            <td>
+                <canvas id="gradientCanvas" width="200" height="50"></canvas>
+            </td>
+            <td>
+                <button id="addStop">add stop</button>
+            </td>
+            <td>
+                <button id="clearGradient">clear gradient</button>
+            </td>
+            <td>
+            </td>
+            <td>
+                <button id="execute">execute</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>
+</body>
 </html>

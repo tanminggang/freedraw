@@ -37,7 +37,7 @@ function globalP(p) {
 	};
 
 	p.draw = function() {
-        p.background(0);
+        p.background(70);
         updateInputTree();
         drawInputTree();
 		drawCounter++;
@@ -51,7 +51,23 @@ $(document).ready(function() {
 
         alpha.a.path = p.line;
         alpha.b.path = p.bezier;
+
+        initDivClickHandlers();
 });
+
+function initDivClickHandlers() {
+    $('#globalCanvas').toggle(true);
+    $('#canvasTable').toggle(false);
+    $('#buttonTable').toggle(false);
+
+    $('#editCharacterSwitch').click(function() {
+            $('#globalCanvas').toggle();
+            $('#canvasTable').toggle();
+            $('#buttonTable').toggle();
+            $('#editCharacterSwitch').toggleClass('editClosed');
+            $('#editCharacterSwitch').toggleClass('editOpen');
+            });
+}
 
 var alpha = {};
 alpha.a = {path1:0,

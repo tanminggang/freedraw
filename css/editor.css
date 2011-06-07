@@ -1,6 +1,41 @@
+* {
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+	outline: 0px;
+	font-family: 'PT Sans', arial, serif;
+	font-weight: normal;
+    background-color: transparent;
+}
+
+/* universal selector */
+html {
+	position: static;
+}
+body {
+	position: static;
+    background-color: #4f4a4d;
+}
+canvas {
+    position: absolute;
+}
+
+#wrapper {
+	width: 960px;
+	margin: 0px auto;
+}
+#innerWrapper {
+    height:1660px;
+    width: 960px;
+	margin: 20px auto;
+    background-color: #444444;
+	text-align: left;
+}
+
 #canvasTable {
 	position: absolute;
-	top: 310px;
+	top: 360px;
 	margin: 0px;
 	padding: 10px;
 	border: 0px;
@@ -34,16 +69,21 @@
 }
 
 button {
-	background-color: #bbaaff;
-	width: 90px;
-	height: 20px;
-	position: relative;
-	right: 0px;
-	top: 0px;
-	cursor: pointer;
+    margin:0px;
+    padding:0px;
+    border:none;
+    outline:0px;
+	background-color:#bbaaff;
+	width:90px;
+	height:20px;
+	position:relative;
+	right:0px;
+	top:0px;
+	cursor:pointer;
 }
 
 #gradientCanvas {
+	background-color: #ffffff;
 	position: relative;
 }
 
