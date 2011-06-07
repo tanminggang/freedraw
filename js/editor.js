@@ -1,3 +1,8 @@
+// freedraw
+// toimawb
+// vijay rudraraju
+// june 7 2011
+
 var canvas, context;
 var image_buffer;
 var fill_change_buffer;
@@ -63,7 +68,6 @@ doodle.clearCanvas = function(  ) {
 	doodle.context.fillStyle = '#000000';
 
 	doodle.updating = false;
-
 }
 doodle.drawStart = function( ev ) {
 
@@ -84,7 +88,7 @@ doodle.drawStart = function( ev ) {
 	doodle.oldY = y;
 
 	doodle.context.beginPath(  );
-	textarea.innerHTML += sprintf( "context.beginPath(  );\n" );
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.beginPath(  );\n" ));
 
 }
 doodle.draw = function( ev ) {
@@ -108,13 +112,10 @@ doodle.draw = function( ev ) {
 		doodle.context.moveTo( doodle.oldX, doodle.oldY );
 		doodle.context.lineTo( x, y );
 		doodle.context.stroke(  );
-		textarea.innerHTML += sprintf( "context.moveTo( %d, %d );\n",
-				doodle.oldX, 
-				doodle.oldY );
-		textarea.innerHTML += sprintf( "context.lineTo( %d, %d );\n",
-				x, 
-				y );
-		textarea.innerHTML += sprintf( "context.stroke(  );\n" );
+
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.moveTo( %d, %d );\n", doodle.oldX, doodle.oldY ));
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.lineTo( %d, %d );\n", x, y ));
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.stroke(  );\n" ));
 
 	}
 
@@ -131,11 +132,12 @@ doodle.drawEnd = function( ev ) {
 		 stroke_mode != 1 ) {
 		return;
 	}
-	textarea.innerHTML += sprintf( "\n" );
+
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "\n" ));
 
 }
 
-var textarea;
+//var textarea;
 var picker;
 var fill_picker;
 var gradient_picker;
@@ -147,7 +149,7 @@ function init() {
 
 	doodle.init(  );
 
-	textarea = document.getElementById('editorTextArea');
+	//textarea = document.getElementById('editorTextArea');
 	picker = document.getElementById('picker');
 	fill_picker = document.getElementById('fill_picker');
 	gradient_picker = document.getElementById('gradient_picker');
@@ -159,12 +161,6 @@ function init() {
 
 	stroke_color = picker.value;
 	fill_color = fill_picker.value;
-
-	textarea.innerHTML += "var canvas = document.getElementById('editorCanvas');\n";
-	textarea.innerHTML += "var context = canvas.getContext('2d');\n";
-	textarea.innerHTML += "context.lineWidth = 1;\n\n";
-	textarea.innerHTML += sprintf("context.strokeStyle = \"%s\";\n", stroke_color);
-	textarea.innerHTML += sprintf("context.fillStyle = \"%s\";\n\n", fill_color);
 
 	canvas = document.getElementById('editorCanvas');
 	if (!canvas) {
@@ -188,6 +184,7 @@ function init() {
 	doodle.canvas = $('#editorCanvas')[0];
 	doodle.context = doodle.canvas.getContext('2d');
 
+    clear();
 
 	context.lineWidth = 1;
 	image_buffer = context.createImageData( canvas.width, canvas.height );
@@ -247,14 +244,15 @@ function catchall_click_handler( ev ) {
 	if ( stroke_color != picker.value.toLowerCase() ) {
 
 		stroke_color = picker.value;
-		textarea.innerHTML += sprintf("context.strokeStyle = \"%s\";\n", stroke_color);
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf("context.strokeStyle = \"%s\";\n", stroke_color));
 
 	}
 
 	if ( fill_color != fill_picker.value.toLowerCase() ) {
 
 		fill_color = fill_picker.value;
-		textarea.innerHTML += sprintf("context.fillStyle = \"%s\";\n", fill_color);
+		//textarea.innerHTML += sprintf("context.fillStyle = \"%s\";\n", fill_color);
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf("context.fillStyle = \"%s\";\n", fill_color));
 
 	}
 
@@ -304,10 +302,15 @@ function gradient_click( ev ) {
 
 function execute_click( ev ) {
 
+    execute();
+
+}
+function execute() {
+
 	event.preventDefault();
 	doodle.clearCanvas();
 	context.save();
-	window.eval( textarea.value );
+    window.eval( $('#editorTextArea').val() );
 	context.restore();
 
 }
@@ -380,11 +383,18 @@ function clear_mouseup( ev ) {
 
 	event.preventDefault(  );
 	document.getElementById('clear').style.backgroundColor = '#bbaaff';
+
+}
+function clear() {
+
 	doodle.clearCanvas(  );
-	textarea.innerHTML = "";
-	textarea.innerHTML += "var canvas = document.getElementById('editorCanvas');\n";
-	textarea.innerHTML += "var context = canvas.getContext('2d');\n";
-	textarea.innerHTML += "context.lineWidth = 1;\n\n";
+
+    $('#editorTextArea').val("");
+    $('#editorTextArea').val($('#editorTextArea').val()+"var canvas = document.getElementById('editorCanvas');\n");
+    $('#editorTextArea').val($('#editorTextArea').val()+"var context = canvas.getContext('2d');\n");
+    $('#editorTextArea').val($('#editorTextArea').val()+"context.lineWidth = 1;\n\n");
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf("context.strokeStyle = \"%s\";\n", stroke_color));
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf("context.fillStyle = \"%s\";\n\n", fill_color));
 
 }
 
@@ -513,16 +523,10 @@ function canvas_quadratic( ev ) {
 
 			quadratic_stage = 0;
 
-			textarea.innerHTML += sprintf( "context.beginPath(  );\n" );
-			textarea.innerHTML += sprintf( "context.moveTo( %d, %d );\n",
-					points[0].x, 
-					points[0].y );
-			textarea.innerHTML += sprintf( "context.quadraticCurveTo( %d, %d, %d, %d );\n",
-					points[2].x,
-					points[2].y,
-					points[1].x, 
-					points[1].y );
-			textarea.innerHTML += sprintf( "context.stroke(  );\n\n" );
+            $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.beginPath(  );\n" ));
+            $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.moveTo( %d, %d );\n", points[0].x, points[0].y ));
+            $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.quadraticCurveTo( %d, %d, %d, %d );\n", points[2].x, points[2].y, points[1].x, points[1].y ));
+            $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.stroke(  );\n\n" ));
 
 		} else if ( fill_mode == 1 ) {
 
@@ -593,21 +597,15 @@ function handle_last_stage_click( ev ) {
 	context.fill(  );
 	context.stroke(  );
 
-	textarea.innerHTML += sprintf( "context.beginPath(  );\n" );
-	textarea.innerHTML += sprintf( "context.moveTo( %d, %d );\n",
-			points[0].x, 
-			points[0].y );
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.beginPath(  );\n" ));
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.moveTo( %d, %d );\n", points[0].x, points[0].y ));
 	
 	for ( var i=0; i<(points.length-1)/2; i++ ) {
-		textarea.innerHTML += sprintf( "context.quadraticCurveTo( %d, %d, %d, %d );\n",
-				points[(i*2)+2].x,
-				points[(i*2)+2].y,
-				points[(i*2)+1].x, 
-				points[(i*2)+1].y );
+        $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.quadraticCurveTo( %d, %d, %d, %d );\n", points[(i*2)+2].x, points[(i*2)+2].y, points[(i*2)+1].x, points[(i*2)+1].y ));
 	}
 
-	textarea.innerHTML += sprintf( "context.fill(  );\n" );
-	textarea.innerHTML += sprintf( "context.stroke(  );\n\n" );
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.fill(  );\n" ));
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.stroke(  );\n\n" ));
 
 	quadratic_stage = 0;
 	fill_flag = 0;

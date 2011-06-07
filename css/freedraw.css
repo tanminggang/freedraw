@@ -9,6 +9,7 @@
     background-color: transparent;
 }
 
+
 html {
 	position:static;
 	background:rgb(0,0,0);
@@ -23,25 +24,23 @@ canvas {
 p {
     position:absolute;
 	font-size:16px;
-    /*
-    -webkit-user-select:none;
-    -khtml-user-select:none;
-    -moz-user-select:none;
-    -o-user-select:none;
-    user-select:none;
-    */
 }
 button {
 	background-color:#bbaaff;
-	width:100px;
-	height:20px;
+	width:120px;
+	height:25px;
 	right:0px;
 	top:0px;
-	cursor:pointer;
+    padding:4px;
+    font-size:12px;
 }
 table {
     vertical-align:middle;
 }
+td {
+    padding:10px;
+}
+
 
 .editClosed {
 	left:0px;
@@ -68,6 +67,12 @@ table {
     background:white;
     color:black;
 }
+.color {
+	border: 2px inset;
+	height: 20px;
+	cursor: pointer;
+}
+
 
 #input {
 	color:rgba(0,0,0,255);
@@ -80,18 +85,11 @@ table {
 	background:white;
 	border:0px;
 }
-#inputLabel {
-	position:absolute;
-    color:white;
-	left:10px;
-	top:20px;
-	font-size:18px;
-}
 #editClosedText {
 	font-size:20px;
 }
 #editCharacterSwitch {
-	z-index:4;
+	z-index:2;
 	position:absolute;
 	font-size:20px;
 	font-family:monospace;
@@ -101,7 +99,7 @@ table {
 	left:0px;
 	top:120px;
 }
-
+/*
 #wrapper {
     width:960px;
     margin:0px auto;
@@ -111,7 +109,14 @@ table {
     width:960px;
     margin:0px auto;
 }
-
+*/
+#charSelect {
+    z-index:1;
+	position: absolute;
+	top:120px;
+    left:20px;
+    padding:10px;
+}
 #canvasTable {
 	position: absolute;
 	top: 360px;
@@ -165,10 +170,4 @@ table {
 	resize: none;
 	outline: none;
 	wrap: soft;
-}
-
-.color {
-	border: 2px inset;
-	height: 20px;
-	cursor: pointer;
 }

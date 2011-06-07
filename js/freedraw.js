@@ -46,30 +46,68 @@ function globalP(p) {
 }
 
 var p;
+var symbols = {};
 $(document).ready(function() {
 		p = new Processing($('#globalCanvas')[0], globalP);
 
-        alpha.a.path = p.line;
-        alpha.b.path = p.bezier;
+        //alpha.a.path = p.line;
+        //alpha.b.path = p.bezier;
 
+        initSymbols();
         initDivClickHandlers();
+        initCharSelectHandler();
 });
+
+function initSymbols() {
+    var symbolIndices = $('#charSelect').children().map(function() {
+            return this.innerHTML; 
+            });
+    for (var i=0;i<symbolIndices.length;i++) {
+        symbols[symbolIndices[i]] = {};
+        symbols[symbolIndices[i]].code = "";
+        symbols[symbolIndices[i]].code += "var canvas = document.getElementById('editorCanvas');\n";
+        symbols[symbolIndices[i]].code += "var context = canvas.getContext('2d');\n";
+        symbols[symbolIndices[i]].code += "context.lineWidth = 1;\n\n";
+        symbols[symbolIndices[i]].code += sprintf("context.strokeStyle = \"%s\";\n", stroke_color);
+        symbols[symbolIndices[i]].code += sprintf("context.fillStyle = \"%s\";\n\n", fill_color);
+    }
+}
+
+//var eventStore;
+function initCharSelectHandler() {
+    this.lastVal = 'a';
+    $('#charSelect').change(function(thisEvent) {
+            var index = $('#charSelect').val();
+            saveLastChar();
+            $('#editorTextArea').val(symbols[index].code.replace("globalCanvas","editorCanvas"));
+            lastVal = index;
+            execute();
+            });
+}
+function saveLastChar() {
+    symbols[lastVal].code = $('#editorTextArea').val().replace("editorCanvas","globalCanvas");
+}
 
 function initDivClickHandlers() {
     $('#globalCanvas').toggle(true);
     $('#canvasTable').toggle(false);
     $('#buttonTable').toggle(false);
+    $('#charSelect').toggle(false);
 
     $('#editCharacterSwitch').click(function() {
             $('#globalCanvas').toggle();
             $('#canvasTable').toggle();
             $('#buttonTable').toggle();
+            $('#charSelect').toggle();
             $('#editCharacterSwitch').toggleClass('editClosed');
             $('#editCharacterSwitch').toggleClass('editOpen');
+
+            saveLastChar();
             });
 }
 
-var alpha = {};
+//var alpha = {};
+/*
 alpha.a = {path1:0,
     path2:0,
     path3:1,
@@ -109,6 +147,7 @@ alpha.e = {path1:0,
     num:4};
 alpha.E = alpha.e.clone();
 alpha.E.isCapital = true;
+*/
 
 var activeText = "";
 var inputTree = [];
@@ -160,6 +199,9 @@ function drawWord(input) {
     var trueI = 0;
 
     for (var i=0;i<input.length;i++) {
+        //p.println(symbols[input[i]].code);
+        window.eval(symbols[input[i]].code);
+        /*
         trueI = i+iCorrection;
         switch(trueI) {
             case 1:
@@ -220,12 +262,15 @@ function drawWord(input) {
                 iCorrection += 12-trueI;
             }
         }
+        */
     }
 
+/*
     alpha[input[0]].path(alpha[input[0]].path1+posX,
             alpha[input[0]].path2+posY,
             alpha[input[0]].path3*10*scaleX+posX,
             alpha[input[0]].path4*10*scaleY+posY);
+    */
 
 }
 
