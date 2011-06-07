@@ -88,6 +88,9 @@ td {
 #editClosedText {
 	font-size:20px;
 }
+#editOpenText{
+	font-size:20px;
+}
 #editCharacterSwitch {
 	z-index:2;
 	position:absolute;
@@ -135,13 +138,29 @@ td {
 	border-spacing: 0px;
 	border-collapse: separate;
 }
-
 #editorCanvas {
-	background-color: #bbbbbb;
-	position: relative;
-    cursor: crosshair;
+    top:180px;
+    left:800px;
+	background-color:#bbbbbb;
+	position:absolute;
+    cursor:crosshair;
 }
-
+#editorTextArea {
+    top:400px;
+    left:20px;
+	font-family:monospace;
+	font-weight: normal;
+	font-size: 14px;
+	width: 370px;
+	height: 600px;
+	background-color: #005E8A;
+	color: #ffffff;
+	position:absolute;
+	padding: 10px;
+	resize: none;
+	outline: none;
+	wrap: soft;
+}
 #tool_title {
 	top: 120px;
 	padding: 10px;
@@ -155,19 +174,4 @@ td {
 #gradientCanvas {
 	background-color: #ffffff;
 	position: relative;
-}
-
-#editorTextArea {
-	font-family: Courier New, Courier New, Courier, monospace;
-	font-weight: normal;
-	font-size: 14px;
-	width: 370px;
-	height: 600px;
-	background-color: #005E8A;
-	color: #ffffff;
-	position: relative;
-	padding: 10px;
-	resize: none;
-	outline: none;
-	wrap: soft;
 }

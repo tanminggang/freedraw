@@ -202,7 +202,7 @@ function init() {
 
 	document.getElementById('picker').addEventListener( 'mousedown', picker_mousedown, false );
 	document.getElementById('fill_picker').addEventListener( 'mousedown', picker_mousedown, false );
-
+    $('#point').click(point_click);
 	document.getElementById('quadratic').addEventListener( 'click', quadratic_click, false );
 	document.getElementById('scribble').addEventListener( 'click', scribble_click, false );
 

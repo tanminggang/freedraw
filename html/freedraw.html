@@ -28,6 +28,7 @@
 
 <div id="editCharacterSwitch" class="editClosed">
     <p id="editClosedText">edit character</p>
+    <p id="editOpenText">input character</p>
 </div>
 
 <textarea id="input" rows="3" value=""></textarea>
@@ -64,16 +65,20 @@
     <option>y</option>
     <option>z</option>
 </select>
+<canvas id="editorCanvas" width="400" height="400"></canvas>
+<textarea id="editorTextArea"></textarea>
+<!--
 <table id="canvasTable" width="800" height="740">
     <tr>
         <td>
-            <canvas id="editorCanvas" width="390" height="620"></canvas>
+            <canvas id="editorCanvas" width="400" height="400"></canvas>
         </td>
         <td>
             <textarea id="editorTextArea"></textarea>
         </td>
     </tr>
 </table>    
+-->
 <table id="buttonTable" width="800" height="180">
     <tr>
         <td>
@@ -114,6 +119,7 @@
         <td>
         </td>
         <td>
+            <button id="point">point</button>
         </td>
         <td>
         </td>

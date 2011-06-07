@@ -90,17 +90,23 @@ function saveLastChar() {
 
 function initDivClickHandlers() {
     $('#globalCanvas').toggle(true);
-    $('#canvasTable').toggle(false);
+    $('#editClosedText').toggle(true);
+    $('#editorCanvas').toggle(false);
+    $('#editorTextArea').toggle(false);
     $('#buttonTable').toggle(false);
     $('#charSelect').toggle(false);
+    $('#editOpenText').toggle(false);
 
     $('#editCharacterSwitch').click(function() {
             $('#globalCanvas').toggle();
-            $('#canvasTable').toggle();
+            $('#editorCanvas').toggle();
+            $('#editorTextArea').toggle();
             $('#buttonTable').toggle();
             $('#charSelect').toggle();
             $('#editCharacterSwitch').toggleClass('editClosed');
             $('#editCharacterSwitch').toggleClass('editOpen');
+            $('#editClosedText').toggle();
+            $('#editOpenText').toggle();
 
             saveLastChar();
             });
