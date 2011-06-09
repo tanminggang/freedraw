@@ -24,9 +24,9 @@ canvas {
 p {
     position:absolute;
 	font-size:16px;
+    color:rgb(255,255,255);
 }
 button {
-	background-color:#bbaaff;
 	width:120px;
 	height:25px;
 	right:0px;
@@ -38,10 +38,16 @@ table {
     vertical-align:middle;
 }
 td {
-    padding:10px;
+    padding:0px;
 }
 
 
+.buttonUp {
+    background-color:#bbaaff;
+}
+.buttonDown {
+    background-color:#ffbbaa;
+}
 .editClosed {
 	left:0px;
 	width:140px;
@@ -56,7 +62,7 @@ td {
 	height:40px;
 	padding:10px;
 	font-size:10px;
-	background:white;	
+	background:green;	
 	color:black;
 }
 .charUnselected {
@@ -129,10 +135,10 @@ td {
 }
 #buttonTable {
 	position:absolute;
-    left:160px;
+    left:170px;
 	top:0px;
 	margin:0px;
-	padding:10px;
+	padding:5px;
 	border:0px;
 	border-spacing:0px;
 	border-collapse:separate;

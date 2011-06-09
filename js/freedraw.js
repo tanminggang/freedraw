@@ -3,6 +3,8 @@
 // vijay rudraraju
 // may 27 2011
 
+var _globalMode = "input";
+
 Object.prototype.clone = function() {
     var newObj = (this instanceof Array) ? [] : {};
     for (i in this) {
@@ -13,16 +15,16 @@ Object.prototype.clone = function() {
     } return newObj;
 };
 
-var screenWidth = 1280;
-var screenHeight = 800;
-var mX = 0; 
-var mY = 0;
-var drawCounter = 0;
+var _screenWidth = 1280;
+var _screenHeight = 800;
+var _mX = 0; 
+var _mY = 0;
+var _drawCounter = 0;
 
 function globalP(p) {
 	p.mouseMoved = function() {
-		mX = p.mouseX;
-		mY = p.mouseY;
+		_mX = p.mouseX;
+		_mY = p.mouseY;
 	};
 
 	p.mouseClicked = function() {
@@ -31,17 +33,24 @@ function globalP(p) {
 	p.setup = function() {
 		//p.println(p.PFont.list());
 
-		p.size(screenWidth,screenHeight);
+		p.size(_screenWidth,_screenHeight);
 		var font = p.loadFont("monospace");
 		p.textFont(font);
+        p.fill(0);
+        p.stroke(0);
 	};
 
 	p.draw = function() {
-        p.background(70);
-        updateInputTree();
-        drawInputTree();
-		drawCounter++;
-		drawCounter = drawCounter % 240;
+        if (_globalMode == "input") {
+            p.background(0);
+            updateInputTree();
+            drawInputTree();
+            _drawCounter++;
+            _drawCounter = _drawCounter % 240;
+        } else if (_globalMode == "edit") {
+            p.noLoop();
+            p.background(255);
+        }
 	};
 }
 
@@ -51,7 +60,7 @@ $(document).ready(function() {
 		p = new Processing($('#composeCanvas')[0], globalP);
 
         initSymbols();
-        initDivClickHandlers();
+        initButtonClickHandlers();
         initCharSelectHandler();
 });
 
@@ -76,7 +85,7 @@ function initCharSelectHandler() {
     $('#charSelect').change(function(thisEvent) {
             var index = $('#charSelect').val();
             saveLastChar();
-            $('#editorTextArea').val(symbols[index].code.replace("composeCanvas","editorCanvas"));
+            //$('#editorTextArea').val(symbols[index].code.replace("composeCanvas","editorCanvas"));
             lastVal = index;
             execute();
             });
@@ -85,7 +94,13 @@ function saveLastChar() {
     symbols[lastVal].code = $('#editorTextArea').val().replace("editorCanvas","composeCanvas");
 }
 
-function initDivClickHandlers() {
+function initButtonClickHandlers() {
+    $('#editCharacterSwitch').toggleClass('editClosed');
+    $('#point').toggleClass('buttonDown');
+    $('#editorTextArea').val("");
+    $('#composeCanvas').click(drawPoint);
+    $('#line').toggleClass('buttonUp');
+
     //$('#composeCanvas').toggle(true);
     $('#editClosedText').toggle(true);
     $('#editorCanvas').toggle(false);
@@ -95,6 +110,15 @@ function initDivClickHandlers() {
     $('#editOpenText').toggle(false);
 
     $('#editCharacterSwitch').click(function() {
+            if (_globalMode == "input") {
+                _globalMode = "edit";
+                p.println("edit");
+            } else if (_globalMode == "edit") {
+                _globalMode = "input";
+                p.println("input");
+                p.loop();
+            }
+
             //$('#composeCanvas').toggle();
             //$('#editorCanvas').toggle();
             //$('#editorTextArea').toggle();
@@ -108,6 +132,15 @@ function initDivClickHandlers() {
 
             saveLastChar();
             });
+}
+
+/*
+* drawing functions
+*/
+function drawPoint() {
+    p.println("drawPoint!");
+    $('#editorTextArea').val($('#editorTextArea').val()+sprintf("p.ellipse(%d,%d,%d,%d);\n",_mX,_mY,5,5));
+    window.eval( $('#editorTextArea').val() );
 }
 
 //var alpha = {};
