@@ -48,10 +48,7 @@ function globalP(p) {
 var p;
 var symbols = {};
 $(document).ready(function() {
-		p = new Processing($('#globalCanvas')[0], globalP);
-
-        //alpha.a.path = p.line;
-        //alpha.b.path = p.bezier;
+		p = new Processing($('#composeCanvas')[0], globalP);
 
         initSymbols();
         initDivClickHandlers();
@@ -79,17 +76,17 @@ function initCharSelectHandler() {
     $('#charSelect').change(function(thisEvent) {
             var index = $('#charSelect').val();
             saveLastChar();
-            $('#editorTextArea').val(symbols[index].code.replace("globalCanvas","editorCanvas"));
+            $('#editorTextArea').val(symbols[index].code.replace("composeCanvas","editorCanvas"));
             lastVal = index;
             execute();
             });
 }
 function saveLastChar() {
-    symbols[lastVal].code = $('#editorTextArea').val().replace("editorCanvas","globalCanvas");
+    symbols[lastVal].code = $('#editorTextArea').val().replace("editorCanvas","composeCanvas");
 }
 
 function initDivClickHandlers() {
-    $('#globalCanvas').toggle(true);
+    //$('#composeCanvas').toggle(true);
     $('#editClosedText').toggle(true);
     $('#editorCanvas').toggle(false);
     $('#editorTextArea').toggle(false);
@@ -98,9 +95,10 @@ function initDivClickHandlers() {
     $('#editOpenText').toggle(false);
 
     $('#editCharacterSwitch').click(function() {
-            $('#globalCanvas').toggle();
-            $('#editorCanvas').toggle();
-            $('#editorTextArea').toggle();
+            //$('#composeCanvas').toggle();
+            //$('#editorCanvas').toggle();
+            //$('#editorTextArea').toggle();
+            $('#input').toggle();
             $('#buttonTable').toggle();
             $('#charSelect').toggle();
             $('#editCharacterSwitch').toggleClass('editClosed');

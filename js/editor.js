@@ -300,6 +300,10 @@ function gradient_click( ev ) {
 
 }
 
+function point_click( ev ) {
+
+}
+
 function execute_click( ev ) {
 
     execute();

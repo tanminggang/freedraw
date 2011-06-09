@@ -97,10 +97,17 @@ td {
 	font-size:20px;
 	font-family:monospace;
 }
-#globalCanvas{
+#composeCanvas{
     position:absolute;
 	left:0px;
 	top:120px;
+}
+#editorCanvas {
+	position:absolute;
+    left:0px;
+    top:120px;
+	background-color:#bbbbbb;
+    cursor:crosshair;
 }
 /*
 #wrapper {
@@ -116,34 +123,19 @@ td {
 #charSelect {
     z-index:1;
 	position: absolute;
-	top:120px;
+	top:70px;
     left:20px;
     padding:10px;
 }
-#canvasTable {
-	position: absolute;
-	top: 360px;
-	margin: 0px;
-	padding: 10px;
-	border: 0px;
-	border-spacing: 0px;
-	border-collapse: separate;
-}
 #buttonTable {
-	position: absolute;
-	top: 180px;
-	margin: 0px;
-	padding: 10px;
-	border: 0px;
-	border-spacing: 0px;
-	border-collapse: separate;
-}
-#editorCanvas {
-    top:180px;
-    left:800px;
-	background-color:#bbbbbb;
 	position:absolute;
-    cursor:crosshair;
+    left:160px;
+	top:0px;
+	margin:0px;
+	padding:10px;
+	border:0px;
+	border-spacing:0px;
+	border-collapse:separate;
 }
 #editorTextArea {
     top:400px;
