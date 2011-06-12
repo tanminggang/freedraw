@@ -97,7 +97,7 @@ td {
 #editOpenText{
 	font-size:20px;
 }
-#editCharacterSwitch {
+#levelSwitch {
 	z-index:2;
 	position:absolute;
 	font-size:20px;
@@ -132,6 +132,7 @@ td {
 	top:70px;
     left:20px;
     padding:10px;
+    background:white;
 }
 #buttonTable {
 	position:absolute;
@@ -143,7 +144,7 @@ td {
 	border-spacing:0px;
 	border-collapse:separate;
 }
-#editorTextArea {
+#textarea {
     top:400px;
     left:20px;
 	font-family:monospace;

@@ -15,11 +15,11 @@ Object.prototype.clone = function() {
     } return newObj;
 };
 
-var _screenWidth = 1280;
-var _screenHeight = 800;
+var _canvasWidth = 800;
+var _canvasHeight = 600;
 var _mX = 0; 
 var _mY = 0;
-var _drawCounter = 0;
+var projectionCode = [];
 
 function globalP(p) {
 	p.mouseMoved = function() {
@@ -33,7 +33,7 @@ function globalP(p) {
 	p.setup = function() {
 		//p.println(p.PFont.list());
 
-		p.size(_screenWidth,_screenHeight);
+		p.size(_canvasWidth,_canvasHeight);
 		var font = p.loadFont("monospace");
 		p.textFont(font);
         p.fill(0);
@@ -42,14 +42,13 @@ function globalP(p) {
 
 	p.draw = function() {
         if (_globalMode == "input") {
-            p.background(0);
+            //p.background(0);
+            resetBlackCanvas();
             updateInputTree();
             drawInputTree();
-            _drawCounter++;
-            _drawCounter = _drawCounter % 240;
         } else if (_globalMode == "edit") {
             p.noLoop();
-            p.background(255);
+            resetWhiteCanvas();
         }
 	};
 }
@@ -71,11 +70,14 @@ function initSymbols() {
     for (var i=0;i<symbolIndices.length;i++) {
         symbols[symbolIndices[i]] = {};
         symbols[symbolIndices[i]].code = "";
+        symbols[symbolIndices[i]].projectionCode = [];
+        /*
         symbols[symbolIndices[i]].code += "var canvas = document.getElementById('editorCanvas');\n";
         symbols[symbolIndices[i]].code += "var context = canvas.getContext('2d');\n";
         symbols[symbolIndices[i]].code += "context.lineWidth = 1;\n\n";
         symbols[symbolIndices[i]].code += sprintf("context.strokeStyle = \"%s\";\n", stroke_color);
         symbols[symbolIndices[i]].code += sprintf("context.fillStyle = \"%s\";\n\n", fill_color);
+        */
     }
 }
 
@@ -83,64 +85,88 @@ function initSymbols() {
 function initCharSelectHandler() {
     this.lastVal = 'a';
     $('#charSelect').change(function(thisEvent) {
-            var index = $('#charSelect').val();
-            saveLastChar();
-            //$('#editorTextArea').val(symbols[index].code.replace("composeCanvas","editorCanvas"));
-            lastVal = index;
-            execute();
+            saveLastSymbolState();
+            lastVal = $('#charSelect').val();
+            execute(lastVal);
             });
 }
-function saveLastChar() {
-    symbols[lastVal].code = $('#editorTextArea').val().replace("editorCanvas","composeCanvas");
+function saveLastSymbolState() {
+    symbols[lastVal].code = $('#textarea').val();
+    symbols[lastVal].projectionCode = projectionCode;
+}
+function execute(index) {
+    resetWhiteCanvas();
+    $('#textarea').val(symbols[index].code);
+    projectionCode = symbols[index].projectionCode;
+    window.eval( $('#textarea').val() );
 }
 
 function initButtonClickHandlers() {
-    $('#editCharacterSwitch').toggleClass('editClosed');
+    $('#levelSwitch').toggleClass('editClosed');
     $('#point').toggleClass('buttonDown');
-    $('#editorTextArea').val("");
+    $('#textarea').val("");
     $('#composeCanvas').click(drawPoint);
     $('#line').toggleClass('buttonUp');
 
     //$('#composeCanvas').toggle(true);
     $('#editClosedText').toggle(true);
     $('#editorCanvas').toggle(false);
-    $('#editorTextArea').toggle(false);
+    $('#textarea').toggle(false);
     $('#buttonTable').toggle(false);
     $('#charSelect').toggle(false);
     $('#editOpenText').toggle(false);
 
-    $('#editCharacterSwitch').click(function() {
+    $('#levelSwitch').click(function() {
             if (_globalMode == "input") {
                 _globalMode = "edit";
-                p.println("edit");
+                //p.println("edit");
             } else if (_globalMode == "edit") {
                 _globalMode = "input";
-                p.println("input");
+                //p.println("input");
                 p.loop();
             }
 
             //$('#composeCanvas').toggle();
             //$('#editorCanvas').toggle();
-            //$('#editorTextArea').toggle();
+            //$('#textarea').toggle();
             $('#input').toggle();
             $('#buttonTable').toggle();
             $('#charSelect').toggle();
-            $('#editCharacterSwitch').toggleClass('editClosed');
-            $('#editCharacterSwitch').toggleClass('editOpen');
+            $('#levelSwitch').toggleClass('editClosed');
+            $('#levelSwitch').toggleClass('editOpen');
             $('#editClosedText').toggle();
             $('#editOpenText').toggle();
 
-            saveLastChar();
+            saveLastSymbolState();
             });
+}
+
+/*
+* canvas functions
+*/
+function resetWhiteCanvas() {
+    p.background(255);
+    p.fill(0);
+    p.stroke(0);
+    p.line(_canvasWidth/2,0,_canvasWidth/2,_canvasHeight);
+    p.line(0,_canvasHeight/2,_canvasWidth,_canvasHeight/2);
+}
+function resetBlackCanvas() {
+    p.background(0);
+    p.fill(255);
+    p.stroke(255);
+    p.line(_canvasWidth/2,0,_canvasWidth/2,_canvasHeight);
+    p.line(0,_canvasHeight/2,_canvasWidth,_canvasHeight/2);
 }
 
 /*
 * drawing functions
 */
 function drawPoint() {
-    p.println("drawPoint!");
-    $('#editorTextArea').val($('#editorTextArea').val()+sprintf("p.ellipse(%d,%d,%d,%d);\n",_mX,_mY,5,5));
-    window.eval( $('#editorTextArea').val() );
+    //p.println("drawPoint!");
+    $('#textarea').val($('#textarea').val()+sprintf("p.ellipse(%d,%d,%d,%d);\n",_mX,_mY,5,5));
+    window.eval( $('#textarea').val() );
+    projectionCode.push(["point",_mX,_mY]);
 }
 
 //var alpha = {};
@@ -197,9 +223,6 @@ function updateInputTree() {
 }
 
 function drawInputTree() {
-    p.stroke(255);
-    p.noFill();
-    
     drawParagraph(inputTree);
 }
 
@@ -221,181 +244,48 @@ function drawPhrase(input) {
             continue;
         }
 
+        if (i % 3 == 0) {
+            p.fill(255-(i*25),0,0);
+            p.stroke(255-(i*25),0,0);
+        } else if (i % 3 == 1) {
+            p.fill(0,255-(i*25),0);
+            p.stroke(0,255-(i*25),0);
+        } else if (i % 3 == 2) {
+            p.fill(0,0,255-(i*25));
+            p.stroke(0,0,255-(i*25));
+        }
+
         drawWord(input[i]);
     }
 }
 
 function drawWord(input) {
-    var scaleX = 1;
-    var scaleY = 1;
+    var projectionArray2;
+    var projectionArray;
 
-    var posX = 0;
-    var posY = 0;
-
-    var iCorrection = 0;
-    var trueI = 0;
-
-    for (var i=0;i<input.length;i++) {
-        //p.println(symbols[input[i]].code);
-        window.eval(symbols[input[i]].code);
-        /*
-        trueI = i+iCorrection;
-        switch(trueI) {
-            case 1:
-                scaleX = alpha[input[i]].num;
-                break;
-            case 2:
-                scaleX += 26 * alpha[input[i]].num;
-                break;
-            case 3:
-                scaleX += 26*26 * alpha[input[i]].num;
-                break;
-            case 4:
-                scaleX += 26*26*26 * alpha[input[i]].num;
-                break;
-            case 5:
-                scaleY = alpha[input[i]].num;
-                break;
-            case 6:
-                scaleY += 26 * alpha[input[i]].num;
-                break;
-            case 7:
-                scaleY += 26*26 * alpha[input[i]].num;
-                break;
-            case 8:
-                scaleY += 26*26*26 * alpha[input[i]].num;
-                break;
-            case 9:
-                posX = alpha[input[i]].num;
-                break;
-            case 10:
-                posX += 26 * alpha[input[i]].num;
-                break;
-            case 11:
-                posX += 26*26 * alpha[input[i]].num;
-                break;
-            case 12:
-                posX += 26*26*26 * alpha[input[i]].num;
-                break;
-            case 13:
-                posY = alpha[input[i]].num;
-                break;
-            case 14:
-                posY += 26 * alpha[input[i]].num;
-                break;
-            case 15:
-                posY += 26*26 * alpha[input[i]].num;
-                break;
-            case 16:
-                posY += 26*26*26 * alpha[input[i]].num;
-                break;
-        }
-        if (alpha[input[i]].isCapital && i>0) {
-            if (trueI<5) {
-                iCorrection = 4-trueI;
-            } else if (trueI<8) {
-                iCorrection += 8-trueI;
-            } else if (trueI<12) {
-                iCorrection += 12-trueI;
+    if (input.length > 2) {
+        projectionArray2 = symbols[input[2]].projectionCode;
+        for (var j=0;j<projectionArray2.length;j++) {
+            projectionArray = symbols[input[1]].projectionCode;
+                window.eval("p.pushMatrix();");
+                window.eval(sprintf("p.translate(%d,%d);",projectionArray2[j][1]-(_canvasWidth/2),projectionArray2[j][2]-(_canvasHeight/2)));
+            for (var i=0;i<projectionArray.length;i++) {
+                window.eval("p.pushMatrix();");
+                window.eval(sprintf("p.translate(%d,%d);",projectionArray[i][1]-(_canvasWidth/2),projectionArray[i][2]-(_canvasHeight/2)));
+                window.eval(symbols[input[0]].code);
+                window.eval("p.popMatrix();");
             }
+            window.eval("p.popMatrix();");
         }
-        */
-    }
-
-/*
-    alpha[input[0]].path(alpha[input[0]].path1+posX,
-            alpha[input[0]].path2+posY,
-            alpha[input[0]].path3*10*scaleX+posX,
-            alpha[input[0]].path4*10*scaleY+posY);
-    */
-
-}
-
-/*
-function drawInputTree() {
-    p.stroke(255);
-    p.noFill();
-
-    for (var i=0;i<inputTree.length;i++) {
-        if (inputTree[i] == "") {
-            continue;
+    } else if (input.length > 1) {
+        projectionArray = symbols[input[1]].projectionCode;
+        for (var i=0;i<projectionArray.length;i++) {
+            window.eval("p.pushMatrix();");
+            window.eval(sprintf("p.translate(%d,%d);",projectionArray[i][1]-(_canvasWidth/2),projectionArray[i][2]-(_canvasHeight/2)));
+            window.eval(symbols[input[0]].code);
+            window.eval("p.popMatrix();");
         }
-        var scaleX = 1;
-        var scaleY = 1;
-
-        var posX = 0;
-        var posY = 0;
-
-        var jCorrection = 0;
-        var trueJ = 0;
-
-        for (var j=0;j<inputTree[i].length;j++) {
-            trueJ = j+jCorrection;
-            switch(trueJ) {
-                case 1:
-                    scaleX = alpha[inputTree[i][j]].num;
-                    break;
-                case 2:
-                    scaleX += 26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 3:
-                    scaleX += 26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 4:
-                    scaleX += 26*26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 5:
-                    scaleY = alpha[inputTree[i][j]].num;
-                    break;
-                case 6:
-                    scaleY += 26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 7:
-                    scaleY += 26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 8:
-                    scaleY += 26*26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 9:
-                    posX = alpha[inputTree[i][j]].num;
-                    break;
-                case 10:
-                    posX += 26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 11:
-                    posX += 26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 12:
-                    posX += 26*26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 13:
-                    posY = alpha[inputTree[i][j]].num;
-                    break;
-                case 14:
-                    posY += 26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 15:
-                    posY += 26*26 * alpha[inputTree[i][j]].num;
-                    break;
-                case 16:
-                    posY += 26*26*26 * alpha[inputTree[i][j]].num;
-                    break;
-            }
-            if (alpha[inputTree[i][j]].isCapital && j>0) {
-                if (trueJ<5) {
-                    jCorrection = 4-trueJ;
-                } else if (trueJ<8) {
-                    jCorrection += 8-trueJ;
-                } else if (trueJ<12) {
-                    jCorrection += 12-trueJ;
-                }
-            }
-        }
-
-        p.line(alpha[inputTree[i][0]].path1+posX,
-                alpha[inputTree[i][0]].path2+posY,
-                alpha[inputTree[i][0]].path3*10*scaleX+posX,
-                alpha[inputTree[i][0]].path4*10*scaleY+posY);
+    } else if (input.length == 1) {
+        window.eval(symbols[input[0]].code);
     }
 }
-*/
