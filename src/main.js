@@ -19,16 +19,6 @@ const router = new Router({
 })
 console.log('main.js', 'router', router)
 
-/*
-router.map({
-  '/': {
-    name: 'Main',
-    component: lazyLoading('./MainView')
-  },
-})
-*/
-
-//router.start(App, 'app')
 const app = new Vue({
   router,
   ...App

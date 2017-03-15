@@ -1,5 +1,5 @@
 <template>
-<div id="app">
+<div id="app" class="green1-bg">
   <router-view></router-view>
 </div>
 </template>
@@ -10,6 +10,9 @@ export default {
   data () {
     return {
     }
+  },
+  created () {
+    console.log('App', 'created')
   }
 }
 </script>
