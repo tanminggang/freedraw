@@ -1,0 +1,87 @@
+<template>
+<div id="innerWrapper">
+
+<table id="canvasTable" width="800" height="740">
+  <tr>
+    <td>
+      <canvas id="editorCanvas" width="390" height="620"></canvas>
+    </td>
+    <td>
+      <textarea id="editorTextArea"></textarea>
+    </td>
+  </tr>
+</table>    
+
+<table id="buttonTable" width="800" height="180">
+  <tr>
+    <td>
+      <input class="color 0" id="picker" value="#ff0000" style="background-color: rgb(256, 0, 0);" readOnly="true"/>
+    </td>
+    <td>
+      <button id="noFill">no fill</button>
+    </td>
+    <td>
+    </td>
+    <td>
+      <button id="scribble">scribble</button>
+    </td>
+    <td>
+      <button id="clear">clear</button>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <input class="color 1" id="fill_picker" value="#0000ff" style="background-color: rgb(0, 0, 256);" readOnly="true"/>
+    </td>
+    <td>
+      <button id="fill">fill</button>
+    </td>
+    <td>
+    </td>
+    <td>
+      <button id="quadratic">quadratic</button>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <input class="color 2" id="gradient_picker" value="#00ff00" style="background-color: rgb(0, 256, 0);" readOnly="true"/>
+    </td>
+    <td>
+      <button id="gradient">gradient</button>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <canvas id="gradientCanvas" width="200" height="50"></canvas>
+    </td>
+    <td>
+      <button id="addStop">add stop</button>
+    </td>
+    <td>
+      <button id="clearGradient">clear gradient</button>
+    </td>
+    <td>
+    </td>
+    <td>
+      <button id="execute">execute</button>
+    </td>
+  </tr>
+</table>
+
+</div>
+</template>
+
+<script>
+</script>
+
+<style>
+</style>
