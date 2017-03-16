@@ -2,11 +2,7 @@
 
 var path = require('path')
 
-let utils = {
-  assetsPath: _path => {
-    return path.posix.join('static', _path)
-  }
-}
+let utils = require('./utils')
 
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -28,7 +24,7 @@ module.exports = {
     contentBase: path.resolve(__dirname, './src'),
   },
   resolve: {
-    extensions: ['.js', '.vue'],
+    extensions: ['.js', '.vue', '.css'],
     modules: [
       path.join(__dirname, './node_modules')
     ],
@@ -73,7 +69,8 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
-    ]
+    ],
+    //loaders: utils.styleLoaders()
   },
   devtool: '#eval-source-map',
   plugins: [

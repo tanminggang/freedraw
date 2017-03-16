@@ -18,6 +18,117 @@ export default {
 </script>
 
 <style>
+* {
+position: relative;
+margin: 0px;
+padding: 0px;
+border: none;
+outline: 0px;
+font-family: 'PT Sans', arial, serif;
+font-weight: normal;
+background-color: transparent;
+}
+
+/* universal selector */
+html, body {
+position: static;
+}
+body {
+background-color: #4f4a4d;
+}
+canvas {
+position: absolute;
+}
+
+#wrapper {
+width: 960px;
+margin: 0px auto;
+}
+#innerWrapper {
+height:1660px;
+width: 960px;
+margin: 20px auto;
+background-color: #444444;
+text-align: left;
+}
+
+#canvasTable {
+position: absolute;
+top: 360px;
+margin: 0px;
+padding: 10px;
+border: 0px;
+border-spacing: 0px;
+border-collapse: separate;
+}
+#buttonTable {
+position: absolute;
+top: 180px;
+margin: 0px;
+padding: 10px;
+border: 0px;
+border-spacing: 0px;
+border-collapse: separate;
+}
+
+#editorCanvas {
+background-color: #bbbbbb;
+position: relative;
+cursor: crosshair;
+}
+
+#tool_title {
+top: 120px;
+padding: 10px;
+height: 10px;
+}
+#tool_description {
+top: 116px;
+padding: 10px;
+}
+
+button {
+margin:0px;
+padding:0px;
+border:none;
+outline:0px;
+background-color:#bbaaff;
+width:90px;
+height:20px;
+position:relative;
+right:0px;
+top:0px;
+cursor:pointer;
+}
+
+#gradientCanvas {
+background-color: #ffffff;
+position: relative;
+}
+
+#editorTextArea {
+font-family: Courier New, Courier New, Courier, monospace;
+font-weight: normal;
+font-size: 14px;
+width: 370px;
+height: 600px;
+background-color: #005E8A;
+color: #ffffff;
+position: relative;
+padding: 10px;
+resize: none;
+outline: none;
+wrap: soft;
+}
+
+.color {
+border: 2px inset;
+height: 20px;
+cursor: pointer;
+}
+
+
+
 .white {
   color: white !important;
 }
