@@ -17,7 +17,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="sass">
+@import '~bulma';
+
+/*
 * {
 position: relative;
 margin: 0px;
@@ -28,6 +31,7 @@ font-family: 'PT Sans', arial, serif;
 font-weight: normal;
 background-color: transparent;
 }
+*/
 
 /* universal selector */
 html, body {
@@ -48,22 +52,12 @@ margin: 0px auto;
 height:1660px;
 width: 960px;
 margin: 20px auto;
-background-color: #444444;
 text-align: left;
 }
 
 #canvasTable {
 position: absolute;
 top: 360px;
-margin: 0px;
-padding: 10px;
-border: 0px;
-border-spacing: 0px;
-border-collapse: separate;
-}
-#buttonTable {
-position: absolute;
-top: 180px;
 margin: 0px;
 padding: 10px;
 border: 0px;
@@ -87,6 +81,7 @@ top: 116px;
 padding: 10px;
 }
 
+/*
 button {
 margin:0px;
 padding:0px;
@@ -100,6 +95,7 @@ right:0px;
 top:0px;
 cursor:pointer;
 }
+*/
 
 #gradientCanvas {
 background-color: #ffffff;
@@ -159,9 +155,6 @@ cursor: pointer;
 
 .mobile-black {
   color: white !important;
-  @include mobile() {
-    color: black !important;
-  }
 }
 
 /* OPEN COLOR */

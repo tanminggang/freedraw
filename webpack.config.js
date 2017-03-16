@@ -70,7 +70,7 @@ module.exports = {
         }
       }
     ],
-    //loaders: utils.styleLoaders()
+    loaders: utils.styleLoaders()
   },
   devtool: '#eval-source-map',
   plugins: [

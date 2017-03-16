@@ -4,12 +4,12 @@ exports.assetsPath = function (_path) {
   return path.posix.join('static', _path)
 }
 
-/*
 exports.cssLoaders = function (options) {
   options = options || {}
   // generate loader string to be used with extract text plugin
   function generateLoaders (loaders) {
     var sourceLoader = loaders.map(function (loader) {
+      console.log('generateLoaders', 'loader', loader)
       var extraParamChar
       if (/\?/.test(loader)) {
         loader = loader.replace(/\?/, '-loader?')
@@ -20,6 +20,7 @@ exports.cssLoaders = function (options) {
       }
       return loader + (options.sourceMap ? extraParamChar + 'sourceMap' : '')
     }).join('!')
+    console.log('generateLoaders', 'sourceLoader', sourceLoader)
 
     return ['vue-style-loader', sourceLoader].join('!')
   }
@@ -28,6 +29,7 @@ exports.cssLoaders = function (options) {
   return {
     css: generateLoaders(['css']),
     postcss: generateLoaders(['css']),
+    sass: generateLoaders(['css', 'sass?indentedSyntax']),
     scss: generateLoaders(['css', 'sass']),
   }
 }
@@ -45,4 +47,5 @@ exports.styleLoaders = function (options) {
   }
   return output
 }
-*/
+
+console.log('utils', 'styleLoaders', exports.styleLoaders())
