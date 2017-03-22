@@ -74,7 +74,7 @@ export const quadraticStageTwo = function ({ obj, x, y }) {
   console.log('quadraticStageTWO', 'obj', obj, 'x', x, 'y', y, 'fill_mode', obj.fill_mode, 'points', obj.points)
   obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
 
-  if (obj.fill_mode === 0 || obj.points.length === 1) {
+  if (!obj.useFill || obj.points.length === 1) {
     obj.resetToLastFrame()
 
     obj.context.quadraticCurveTo(
@@ -130,26 +130,29 @@ export const quadraticStageThree = function ({ obj, x, y }) {
 
   console.log('quadraticStageTHREE', 'obj', obj, 'x', x, 'y', y, 'fill_mode', obj.fill_mode, 'points', obj.points)
 
-  if (obj.fill_mode == 0) {
+  if (!obj.useFill) {
     obj.quadratic_stage = 0
-  } else if (obj.fill_mode == 1) {
-    obj.quadratic_stage = 1
+  } else {
+    if (obj.fill_mode == 1) {
+      obj.quadratic_stage = 1
 
-    if (obj.fill_flag == 0) {
-      obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
-    } else if (obj.fill_flag == 1) {
-      obj.handleLastStageClick()
-    }
-  } else if (obj.fill_mode == 2) {
-    obj.quadratic_stage = 1
+      if (obj.fill_flag == 0) {
+        obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
+      } else if (obj.fill_flag == 1) {
+        obj.handleLastStageClick()
+      }
+    } else if (obj.fill_mode == 2) {
+      obj.quadratic_stage = 1
 
-    if (obj.fill_flag == 0) {
-      obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
-    } else if (obj.fill_flag == 1) {
-      obj.gradient_stage = 0
-      pick_gradient_direction( ev );
-      obj.canvas.removeEventListener('click', obj.canvas_click_handler, false)
-      obj.canvas.addEventListener('click', obj.pick_gradient_direction, false)
+      if (obj.fill_flag == 0) {
+        obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
+      } else if (obj.fill_flag == 1) {
+        obj.gradient_stage = 0
+        obj.pickingGradient = true
+        //obj.pickGradientDirection( ev );
+        //obj.canvas.removeEventListener('click', obj.canvas_click_handler, false)
+        obj.canvas.addEventListener('click', obj.pickGradientDirection, false)
+      }
     }
   }
 
@@ -177,7 +180,7 @@ export const quadraticMoveStage = function ({ obj, ev }) {
 
   obj.resetToLastFrame()
 
-  if (obj.fill_mode == 0 || obj.points.length == 3) {
+  if (!obj.useFill || obj.points.length == 3) {
     obj.context.beginPath()
     obj.context.moveTo(obj.points[0].x, obj.points[0].y)
     obj.context.quadraticCurveTo(
@@ -190,7 +193,7 @@ export const quadraticMoveStage = function ({ obj, ev }) {
 
     obj.points[2].x = x;
     obj.points[2].y = y;
-  } else if (obj.fill_mode == 1 || obj.fill_mode == 2) {
+  } else {
     obj.context.beginPath()
     obj.context.moveTo(obj.points[length-4].x, obj.points[length-4].y);
     obj.context.quadraticCurveTo(

@@ -44,7 +44,7 @@ export default {
   padding: 10px;
   resize: none;
   outline: none;
-  height: 600px;
+  height: 300px;
 }
 
 .white {
