@@ -22,11 +22,17 @@ export const lineStageOne = function ({ obj, x, y }) {
   obj.textArea.value = obj.textArea.value+`\ncontext.beginPath();\n`
   obj.textArea.value = obj.textArea.value+`context.moveTo(${x}, ${y});\n`
 
+  obj.straightCount = 0
+
 }
 
 export const lineStageTwo = function ({ obj, x, y }) {
 
   console.log('lineStageTWO', 'obj', obj, 'x', x, 'y', y)
+
+  if (obj.straightCount == 0) {
+    obj.context.putImageData(obj.image_buffer, 0, 0)
+  }
 
   obj.context.lineTo(x, y);
   obj.context.stroke();
@@ -39,6 +45,8 @@ export const lineStageTwo = function ({ obj, x, y }) {
   
   obj.textArea.value = obj.textArea.value+`context.lineTo(${x}, ${y});\n`
   obj.textArea.value = obj.textArea.value+`context.stroke();\n`
+
+  obj.straightCount++
 
 }
 
@@ -149,8 +157,6 @@ export const quadraticStageThree = function ({ obj, x, y }) {
       } else if (obj.fill_flag == 1) {
         obj.gradient_stage = 0
         obj.pickingGradient = true
-        //obj.pickGradientDirection( ev );
-        //obj.canvas.removeEventListener('click', obj.canvas_click_handler, false)
         obj.canvas.addEventListener('click', obj.pickGradientDirection, false)
       }
     }
@@ -210,90 +216,14 @@ export const quadraticMoveStage = function ({ obj, ev }) {
 
 }
 
-/*
-export const highlightOrigin = function ({ obj, ev }) {
+export const execute = function({ obj }) {
 
-  console.log('utils', 'highlightOrigin')
+  console.log('utils', 'execute', obj.textArea.value.length)
 
-  let x, y
-  let length = obj.points.length
+	obj.clearCanvas();
 
-  if (ev.layerX || ev.layerX == 0) {
-    x = ev.layerX;
-    y = ev.layerY;
-  } else if (ev.offsetX || ev.offsetX == 0) {
-    x = ev.offsetX;
-    y = ev.offsetY;
-  }
-
-  //console.log('highlightOrigin', 'x', x, 'y', y)
-
-  if (Math.abs(x - obj.points[0].x) < 5 && Math.abs(y - obj.points[0].y) < 5) {
-    obj.context.beginPath();
-    obj.context.arc(obj.points[0].x, obj.points[0].y, 3, 0, 2*Math.PI, true)
-    obj.context.fill()
-    obj.context.stroke()
-    obj.fill_flag = 1
-    obj.adj_x = obj.points[0].x
-    obj.adj_y = obj.points[0].y
-  } else {
-    obj.resetToLastFrame()
-    obj.fill_flag = 0
-  }
+  window.eval(obj.textArea.value);
+  
+  obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)		
 
 }
-*/
-
-/*
-export const canvas_quadratic_modify = function(ev) {
-
-	var x, y;
-	var length = points.length;
-
-	if (ev.layerX || ev.layerX == 0) {
-		x = ev.layerX;
-		y = ev.layerY;
-	} else if (ev.offsetX || ev.offsetX == 0) {
-		x = ev.offsetX;
-		y = ev.offsetY;
-	}
-
-  console.log('editor', 'canvas_quadratic_modify', 'x', x, 'y', y)
-
-	context.clearRect( 0, 0, canvas.width, canvas.height );
-	context.putImageData( image_buffer, 0, 0 );
-
-	if ( fill_mode == 0 || points.length == 3 ) {
-
-		context.beginPath( );
-		context.moveTo( points[0].x, points[0].y );
-		context.quadraticCurveTo(
-      x,
-      y,
-      points[1].x,
-      points[1].y 
-    );
-		context.stroke( );
-
-		points[2].x = x;
-		points[2].y = y;
-
-	} else if ( fill_mode == 1 || fill_mode == 2 ) {
-
-		context.beginPath( );
-		context.moveTo( points[length-4].x, points[length-4].y );
-		context.quadraticCurveTo(
-      x,
-      y,
-      points[length-2].x,
-      points[length-2].y 
-    );
-		context.stroke( );
-
-		points[length-1].x = x;
-		points[length-1].y = y;
-
-	}
-
-}
-*/

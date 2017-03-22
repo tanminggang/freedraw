@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <div class="tile is-parent notification is-primary" v-show="fill_mode == 1 && useFill">
+        <div class="tile is-parent notification is-primary" v-show="fill_mode == 1 && useFill && connectLines">
           <div class="tile is-child">
             <label class="label">Fill Color</label>
             <slider id="fill_picker" v-model="fillColor" @change-color="onFillChange"></slider>
@@ -31,10 +31,10 @@
             <div class="level">
               <!--<a id="gradient" class="button level-item" @click="onGradientModeClick">gradient</a>-->
               <p class="control">
-                <a id="addStop" class="button level-item" @click="onAddStopClick">Add Stop</a>
+                <a id="addStop" class="button level-item" @click="onAddStopClick">Add Color Stop</a>
               </p>
               <p class="control">
-                <a id="clearGradient" class="button level-item">Clear Gradient</a>
+                <a id="clearGradient" class="button level-item" @click="onClearGradientClick">Clear Gradient</a>
               </p>
             </div>
           </div>
@@ -83,7 +83,7 @@
             </div>
           </div>
 
-          <div class="tile is-child" v-show="stroke_mode != 1 && useFill">
+          <div class="tile is-child" v-show="stroke_mode != 1 && useFill && connectLines">
             <div class="field">
               <label class="label">Fill Type</label>
               <p class="control">
@@ -107,7 +107,7 @@
             <label class="label">Commands</label>
             <div class="level">
               <p class="control">
-                <a id="execute" class="button">RUN CODE</a>
+                <a id="execute" class="button" @click="onClickExecute">RUN CODE</a>
               </p>
               <p class="control">
                 <a id="clear" @click="onClearClick" class="button">ERASE ALL</a>
@@ -144,6 +144,7 @@ import {
   quadraticStageTwo,
   quadraticStageThree,
   quadraticMoveStage,
+  execute,
 } from './utils'
 
 import { Slider } from 'vue-color'
@@ -201,6 +202,7 @@ export default {
       gradient_point_2: new Point(0, 0),
       gradient_stage: 0,
       pickingGradient: false,
+      straightCount: 0,
     }
   },
   created () {
@@ -245,7 +247,7 @@ export default {
       console.log('MainView', 'methods', 'init', document.getElementById('gradientCanvas'))
 
       this.gradientContext = this.gradientCanvas.getContext('2d')
-      this.gradientContext.fillStyle = '#eeeeee';
+      this.gradientContext.fillStyle = '#ffffff';
       this.gradientContext.fillRect(0, 0, this.gradientCanvas.width, this.gradientCanvas.height);
 
       this.canvas = document.getElementById('editorCanvas')
@@ -278,12 +280,12 @@ export default {
       this.textArea.value = this.textArea.value+`\ncontext.strokeStyle = '${this.lineColor.hex}';\n`
     },
     onFillChange(val) {
-      console.log('MainView', 'methods', 'onFillChange', val.hex)
+      console.log('methods', 'onFillChange', val.hex)
       this.fillColor = val
       this.textArea.value = this.textArea.value+`\ncontext.fillStyle = '${this.fillColor.hex}';\n`
     },
     onGradientChange(val) {
-      console.log('MainView', 'methods', 'onGradientChange', val)
+      console.log('methods', 'onGradientChange', val)
       this.gradientColor = val
     },
     onCanvasMouseDown(ev) {
@@ -291,12 +293,12 @@ export default {
         return
       }
 
-      console.log('MainView', 'methods', 'onCanvasMouseDown', 'stroke_mode', this.stroke_mode)
-      console.log('MainView', 'methods', 'onCanvasMouseDown', 'ev.pageX', ev.pageX, 'ev.pageY', ev.pageY)
+      console.log('methods', 'onCanvasMouseDown', 'stroke_mode', this.stroke_mode)
+      console.log('methods', 'onCanvasMouseDown', 'ev.pageX', ev.pageX, 'ev.pageY', ev.pageY)
       let x = ev.pageX - this.canvasLeft
       let y = ev.pageY - this.canvasTop
 
-      console.log('MainView', 'methods', 'onCanvasMouseDown', 'x', x, 'y', y)
+      console.log('methods', 'onCanvasMouseDown', 'x', x, 'y', y)
       this.drawing = true
 
       this.context.strokeStyle = this.lineColor.hex;
@@ -318,8 +320,7 @@ export default {
         return
       }
 
-      console.log('MainView', 'methods', 'onCanvasMouseMove')
-
+      console.log('methods', 'onCanvasMouseMove')
 
       let x = ev.pageX - this.canvasLeft
       let y = ev.pageY - this.canvasTop
@@ -345,17 +346,30 @@ export default {
         return
       }
 
-      console.log('MainView', 'methods', 'onBodyMouseUp')
+      console.log('methods', 'onBodyMouseUp')
 
       this.drawing = false
       this.textArea.value = this.textArea.value+`\n`
     },
     onClearClick() {
-      console.log('MainView', 'methods', 'onClearClick')
+      console.log('methods', 'onClearClick')
       this.clearCanvas()
+      this.clearTextArea()
+    },
+    onClearGradientClick() {
+      console.log('methods', 'onClearGradientClick')
+
+      this.gradient_stops.length = 0;
+
+      this.gradientContext.fillStyle = '#ffffff';
+      this.gradientContext.fillRect(0, 0, this.gradientCanvas.width, this.gradientCanvas.height);
+    },
+    clearTextArea() {
+      this.textArea.value = ``
+      this.textArea.value = `let canvas = document.getElementById('editorCanvas');\nlet context = canvas.getContext('2d');\n\ncontext.lineWidth = 1;\n\ncontext.strokeStyle = '${this.lineColor.hex}';\ncontext.fillStyle = '${this.fillColor.hex}';\n`
     },
     clearCanvas() {
-      console.log('MainView', 'methods', 'clearCanvas')
+      console.log('methods', 'clearCanvas')
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.image_buffer = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height)		
 
@@ -364,9 +378,6 @@ export default {
       this.context.fillStyle = '#bbbbbb'
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.fillStyle = this.fillColor.hex
-
-      this.textArea.value = ``
-      this.textArea.value = `let canvas = document.getElementById('editorCanvas');\nlet context = canvas.getContext('2d');\n\ncontext.lineWidth = 1;\n\ncontext.strokeStyle = '${this.lineColor.hex}';\ncontext.fillStyle = '${this.fillColor.hex}';\n`
 
       this.quadraticActivated = false
       this.quadratic_stage = 0
@@ -433,7 +444,7 @@ export default {
     onBodyClick(ev) {
       let id = ev.target.id
       console.log('methods', 'onBodyClick', 'id', id, 'quadratic_stage', this.quadratic_stage, 'fill_mode', this.fill_mode)
-      if (id !== 'editorCanvas' && id !== 'clear' ) {
+      if (id !== 'editorCanvas' && id !== 'clear' && id !== 'execute') {
         this.resetToLastFrame() 
         this.quadraticActivated = false
         this.points = []
@@ -475,7 +486,7 @@ export default {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.putImageData(this.image_buffer, 0, 0)
 
-      if (this.fill_mode == 0 || this.points.length == 3) {
+      if (!this.useFill || this.points.length == 3) {
         this.context.beginPath();
         this.context.moveTo(this.points[0].x, this.points[0].y)
         this.context.quadraticCurveTo(x, y, this.points[1].x, this.points[1].y)
@@ -483,7 +494,7 @@ export default {
 
         this.points[2].x = x;
         this.points[2].y = y;
-      } else if (this.fill_mode == 1 || this.fill_mode == 2) {
+      } else if (this.points.length > 3) {
         this.context.beginPath()
         this.context.moveTo(this.points[length-4].x, this.points[length-4].y)
         this.context.quadraticCurveTo(x, y, this.points[length-2].x, this.points[length-2].y)
@@ -519,7 +530,7 @@ export default {
             this.adj_y = this.points[0].y
         } else {
           this.resetToLastFrame()
-            this.fill_flag = 0
+          this.fill_flag = 0
         }
     },
     handleLastStageClick() {
@@ -543,6 +554,26 @@ export default {
 
       if (this.fill_mode == 2) {
         this.context.fillStyle = this.fill_gradient
+        /*
+        this.fill_gradient = this.context.createLinearGradient( 
+            this.gradient_point_1.x, 
+            this.gradient_point_1.y, 
+            this.gradient_point_2.x,
+            this.gradient_point_2.y
+        )
+        */
+
+        this.textArea.value = this.textArea.value+`\nlet gradient = context.createLinearGradient(${this.gradient_point_1.x}, ${this.gradient_point_1.y}, ${this.gradient_point_2.x}, ${this.gradient_point_2.y});\n`;
+        for (let i=0; i<this.gradient_stops.length; i++) {
+          if (i == 0) {
+            this.textArea.value = this.textArea.value+`gradient.addColorStop(0.0, '${this.gradient_stops[0]}');\n`;
+          } else {
+            this.gradient.addColorStop(i*(1.0/(this.gradient_stops.length-1)), this.gradient_stops[i])
+            this.textArea.value = this.textArea.value+`gradient.addColorStop(${i*(1.0/(this.gradient_stops.length-1))}, '${this.gradient_stops[1]}');\n`;
+          }
+        }
+        this.textArea.value = this.textArea.value+`context.fillStyle = gradient;\n`;
+
       }
 
       this.context.fill()
@@ -628,8 +659,11 @@ export default {
         this.canvas.removeEventListener('click', this.pickGradientDirection, false)
       } 
 
+    },
+    onClickExecute() {
+      console.log('methods', 'onClickExecute')
+      execute({ obj: this })
     }
-
   }
 
 }
