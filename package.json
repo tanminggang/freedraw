@@ -10,7 +10,7 @@
     "npm": ">= 3"
   },
   "dependencies": {
-    "bulma": "^0.3.2",
+    "bulma": "^0.4.0",
     "vue": "^2.2.4",
     "vue-color": "^2.0.6",
     "vue-router": "^2.3.0"

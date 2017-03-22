@@ -1,97 +1,134 @@
 <template>
-<div id="innerWrapper" @mouseup="onBodyMouseUp" @click="onBodyClick">
-
-<table id="canvasTable" width="800" height="740">
-  <tr>
-    <td>
-      <canvas id="editorCanvas" width="390" height="620" @mousedown="onCanvasMouseDown" @mousemove="onCanvasMouseMove" @click="onCanvasClick"></canvas>
-    </td>
-    <td>
-      <textarea id="editorTextArea"></textarea>
-    </td>
-  </tr>
-</table>    
-
-<table id="buttonTable" width="800" height="180">
-  <tr>
-    <td>
-      <slider id="picker" v-model="lineColor" @change-color="onStrokeChange"></slider>
-    </td>
-    <td>
-      <a id="noFill" class="button">no fill</a>
-    </td>
-    <td>
-    </td>
-    <td>
-      <a id="scribble" @click="onScribbleClick" class="button">scribble</a>
-      <a id="clear" @click="onClearClick" class="button">CLEAR</a>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <slider id="fill_picker" v-model="fillColor" @change-color="onFillChange"></slider>
-    </td>
-    <td>
-      <a id="fill" class="button">fill</a>
-    </td>
-    <td>
-    </td>
-    <td>
-      <a id="quadratic" class="button" @click="onQuadraticClick">Quadratic</a>
-      <a id="line" class="button" @click="onLineClick">Straight Line</a>
-      <div class="field">
-        <p class="control">
-          <label class="checkbox">
-            <input type="checkbox" v-model="connectLines">
-            Connect Lines
-          </label>
-        </p>
+<div class="tile is-ancestor" @mouseup="onBodyMouseUp" @click="onBodyClick">
+  <div class="tile is-vertical">
+    <div class="tile">
+      <div class="tile is-parent is-vertical">
+        <div class="tile is-child notification is-primary">
+          <label class="label">Line Color</label>
+          <slider id="picker" v-model="lineColor" @change-color="onStrokeChange"></slider>
+        </div>
+        <div class="tile is-child notification is-primary">
+          <label class="label">Fill Color</label>
+          <slider id="fill_picker" v-model="fillColor" @change-color="onFillChange"></slider>
+        </div>
+        <div class="tile is-child notification is-primary">
+          <label class="label">Gradient Color</label>
+          <div class="level">
+            <slider id="gradient_picker" v-model="gradientColor" @change-color="onGradientChange"></slider>
+          </div>
+          <div class="level">
+            <canvas id="gradientCanvas" height="50" class="level-item"></canvas>
+          </div>
+          <div class="level">
+            <!--<a id="gradient" class="button level-item" @click="onGradientModeClick">gradient</a>-->
+            <p class="control">
+              <a id="addStop" class="button level-item" @click="onAddStopClick">Add Stop</a>
+            </p>
+            <p class="control">
+              <a id="clearGradient" class="button level-item">Clear Gradient</a>
+            </p>
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <p class="control">
-          <label class="checkbox">
-            <input type="checkbox" v-model="useFill" @click="onFillCheckboxClick">
-            Use Fill
-          </label>
-        </p>
+      <div class="tile is-parent is-vertical">
+        <div class="tile is-child notification is-primary">
+          <div class="field">
+            <label class="label">Fill Type</label>
+            <p class="control">
+              <label class="radio">
+                <input type="radio" name="fillType" value="0" v-model="fill_mode">
+                No Fill 
+              </label>
+              <label class="radio">
+                <input type="radio" name="fillType" value="1" v-model="fill_mode">
+                Solid Fill
+              </label>
+              <label class="radio">
+                <input type="radio" name="fillType" value="2" v-model="fill_mode">
+                Gradient Fill
+              </label>
+            </p>
+          </div>
+          <!--
+          <a id="noFill" class="button">no fill</a>
+          <a id="fill" class="button">fill</a>
+          -->
+          <!--
+          <div class="field">
+            <p class="control">
+              <a id="scribble" @click="onScribbleClick" class="button">scribble</a>
+              <a id="quadratic" class="button" @click="onQuadraticClick">Quadratic</a>
+              <a id="line" class="button" @click="onLineClick">Straight Line</a>
+            </p>
+          </div>
+          -->
+        </div>
+        <div class="tile is-child notification is-primary">
+          <div class="field">
+            <label class="label">Line Type</label>
+            <p class="control">
+              <label class="radio">
+                <input type="radio" name="strokeType" value="0" v-model="stroke_mode">
+                Straight Line
+              </label>
+              <label class="radio">
+                <input type="radio" name="strokeType" value="1" v-model="stroke_mode">
+                Scribble Line
+              </label>
+              <label class="radio">
+                <input type="radio" name="strokeType" value="2" v-model="stroke_mode">
+                Quadratic Line
+              </label>
+            </p>
+          </div>
+        </div>
+        <div class="tile is-child notification is-primary">
+          <label class="label">Options</label>
+          <div class="field">
+            <p class="control">
+              <label class="checkbox">
+                <input type="checkbox" v-model="connectLines">
+                Connect Lines
+              </label>
+            </p>
+            <p class="control">
+              <label class="checkbox">
+                <input type="checkbox" v-model="useFill" @click="onFillCheckboxClick">
+                Use Fill
+              </label>
+            </p>
+          </div>
+        </div>
+        <div class="tile is-child notification is-primary">
+          <label class="label">Commands</label>
+          <div class="level">
+            <p class="control">
+              <a id="execute" class="button">execute</a>
+            </p>
+            <p class="control">
+              <a id="clear" @click="onClearClick" class="button">CLEAR</a>
+            </p>
+          </div>
+        </div>
       </div>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <slider id="gradient_picker" v-model="gradientColor" @change-color="onGradientChange"></slider>
-    </td>
-    <td>
-      <a id="gradient" class="button">gradient</a>
-    </td>
-    <td>
-    </td>
-    <td>
-    </td>
-    <td>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <canvas id="gradientCanvas" width="200" height="50"></canvas>
-    </td>
-    <td>
-      <a id="addStop" class="button">add stop</a>
-    </td>
-    <td>
-      <a id="clearGradient" class="button">clear gradient</a>
-    </td>
-    <td>
-    </td>
-    <td>
-      <a id="execute" class="button">execute</a>
-    </td>
-  </tr>
-</table>
-
+    </div>
+    <div class="tile">
+      <div class="tile is-parent">
+        <div class="tile is-child">
+          <label class="label">Drawing Canvas</label>
+          <canvas id="editorCanvas" width="400" height="600" @mousedown="onCanvasMouseDown" @mousemove="onCanvasMouseMove" @click="onCanvasClick" class="level-item"></canvas>
+        </div>
+      </div>
+      <div class="tile is-parent">
+        <div class="tile is-child">
+          <label class="label">Drawing Code</label>
+          <div class="level">
+            <textarea id="editorTextArea" class="textarea level-item"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -133,13 +170,14 @@ export default {
       context: null,
       image_buffer: null,
       fill_change_buffer: null,
-      stroke_mode: 2,
-      fill_mode: 0,
+      stroke_mode: "0",
+      fill_mode: "0",
       drawing: false,
       lineThickness: 1,
       gradientCanvas: null,
       gradientContext: null,
       gradient_stops: [],
+      gradient: null,
       picker: null,
       fill_picker: null,
       gradient_picker: null,
@@ -205,6 +243,8 @@ export default {
         alert('Error: I cannot find the canvas element!')
         return
       }
+      console.log('MainView', 'methods', 'init', 'canvas.width', this.canvas.width, 'canvas.height', this.canvas.height)
+
       if (!this.canvas.getContext) {
         alert('Error: no canvas.getContext!');
         return;
@@ -237,7 +277,7 @@ export default {
       this.gradientColor = val
     },
     onCanvasMouseDown(ev) {
-      if (this.stroke_mode !== 1 || this.drawing) {
+      if (this.stroke_mode != 1 || this.drawing) {
         return
       }
 
@@ -260,7 +300,7 @@ export default {
       this.textArea.value = this.textArea.value+`context.beginPath();\n`
     },
     onCanvasMouseMove(ev) {
-      if (this.stroke_mode !== 1 || !this.drawing) {
+      if (this.stroke_mode != 1 || !this.drawing) {
         //console.log('MainView', 'methods', 'onCanvasMouseMove', 'quadraticActivated', this.quadraticActivated)
         if (this.quadraticActivated) {
           quadraticMoveStage({ obj: this, ev })
@@ -291,7 +331,7 @@ export default {
       this.oldY = y
     },
     onBodyMouseUp() {
-      if (this.stroke_mode !== 1) {
+      if (this.stroke_mode != 1) {
         return
       }
 
@@ -323,20 +363,10 @@ export default {
       this.started = false;
       this.points = [];
     },
-    onLineClick() {
-      console.log('methods', 'onLineClick')
-      this.stroke_mode = 0;
-    },
-    onScribbleClick() {
-      console.log('methods', 'onScribbleClick')
-      this.stroke_mode = 1;
-    },
-    onQuadraticClick() {
-      console.log('methods', 'onQuadraticClick')
-      this.stroke_mode = 2;
-    },
     onCanvasClick(ev) {
-      console.log('methods', 'onCanvasClick')
+      console.log('methods', 'onCanvasClick', 'stroke_mode', this.stroke_mode, 'started', this.started)
+      console.log('methods', 'onCanvasClick', 'quadratic_stage', this.quadratic_stage)
+      console.log('methods', 'onCanvasClick', 'fill_mode', this.fill_mode, 'fill_flag', this.fill_flag)
 
       let x, y;
       if (ev.layerX || ev.layerX == 0) {
@@ -350,7 +380,7 @@ export default {
       this.context.strokeStyle = this.lineColor.hex;
       this.context.fillStyle = this.fillColor.hex;
 
-      switch (this.stroke_mode) {
+      switch (parseInt(this.stroke_mode)) {
         case 0:
           if (!this.started) {
             lineStageOne({ obj: this, x, y })
@@ -396,6 +426,136 @@ export default {
         this.quadratic_stage = 0
         this.started = false
       }
+    },
+    onAddStopClick(ev) {
+      console.log('methods', 'onAddStopClick', 'gradientColor', this.gradientColor.hex)
+
+      this.gradient_stops.push(this.gradientColor.hex)
+
+      this.gradient = this.gradientContext.createLinearGradient(0, 0, 200, 0)
+      for (let i=0; i<this.gradient_stops.length; i++) {
+        if (i == 0) {
+          this.gradient.addColorStop(0.0, this.gradient_stops[0])
+        } else {
+          this.gradient.addColorStop(i*(1.0/(this.gradient_stops.length-1)), this.gradient_stops[i])
+        }
+      }
+
+      this.gradientContext.fillStyle = this.gradient
+      this.gradientContext.fillRect(0, 0, this.gradientCanvas.width, this.gradientCanvas.height)
+    },
+    canvasQuadraticModify(ev) {
+      var x, y;
+      var length = this.points.length;
+
+      if (ev.layerX || ev.layerX == 0) {
+        x = ev.layerX;
+        y = ev.layerY;
+      } else if (ev.offsetX || ev.offsetX == 0) {
+        x = ev.offsetX;
+        y = ev.offsetY;
+      }
+
+      console.log('methods', 'canvasQuadraticModify', 'x', x, 'y', y)
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.context.putImageData(this.image_buffer, 0, 0)
+
+      if (this.fill_mode == 0 || this.points.length == 3) {
+        this.context.beginPath();
+        this.context.moveTo(this.points[0].x, this.points[0].y)
+        this.context.quadraticCurveTo(x, y, this.points[1].x, this.points[1].y)
+        this.context.stroke()
+
+        this.points[2].x = x;
+        this.points[2].y = y;
+      } else if (this.fill_mode == 1 || this.fill_mode == 2) {
+        this.context.beginPath()
+        this.context.moveTo(this.points[length-4].x, this.points[length-4].y)
+        this.context.quadraticCurveTo(x, y, this.points[length-2].x, this.points[length-2].y)
+        this.context.stroke()
+
+        this.points[length-1].x = x
+        this.points[length-1].y = y
+      }
+    },
+    highlightOrigin(ev) {
+      console.log('methods', 'highlightOrigin', 'ev', ev)
+
+      let x, y
+      let length = this.points.length
+
+      if (ev.layerX || ev.layerX == 0) {
+        x = ev.layerX;
+        y = ev.layerY;
+      } else if (ev.offsetX || ev.offsetX == 0) {
+        x = ev.offsetX;
+        y = ev.offsetY;
+      }
+
+      console.log('methods', 'highlightOrigin', 'x', x, 'y', y)
+
+      if (Math.abs(x - this.points[0].x) < 5 && Math.abs(y - this.points[0].y) < 5) {
+        this.context.beginPath()
+        this.context.arc(this.points[0].x, this.points[0].y, 3, 0, 2*Math.PI, true)
+        this.context.fill()
+        this.context.stroke()
+        this.fill_flag = 1
+        this.adj_x = this.points[0].x
+        this.adj_y = this.points[0].y
+      } else {
+        this.resetToLastFrame()
+        this.fill_flag = 0
+      }
+    },
+    handleLastStageClick() {
+
+      console.log('methods', 'handleLastStageClick', 'fill_chain_buffer', this.fill_chain_buffer)
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.context.putImageData(this.fill_chain_buffer, 0, 0)
+
+      this.context.beginPath()
+      this.context.moveTo(this.points[0].x, this.points[0].y)
+
+      for (let i=0; i<(this.points.length-1)/2; i++) {
+        this.context.quadraticCurveTo( 
+          this.points[(i*2)+2].x,
+          this.points[(i*2)+2].y,
+          this.points[(i*2)+1].x,
+          this.points[(i*2)+1].y 
+        )
+      }
+
+      if (this.fill_mode == 2) {
+        this.context.fillStyle = this.fill_gradient
+      }
+
+      this.context.fill()
+      this.context.stroke()
+
+
+      //this.textArea.value = `let canvas = document.getElementById('editorCanvas');\nlet context = canvas.getContext('2d');\n\ncontext.lineWidth = 1;\n\ncontext.strokeStyle = '${this.lineColor.hex}';\ncontext.fillStyle = '${this.fillColor.hex}';\n`
+      //this.textArea.value = this.textArea.value+`\ncontext.strokeStyle = '${this.lineColor.hex}';\n`
+
+      this.textArea.value = this.textArea.value+`\ncontext.beginPath();\n`;
+      this.textArea.value = this.textArea.value+`context.moveTo(${this.points[0].x}, ${this.points[0].y});\n`;
+      //$('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.moveTo( %d, %d );\n", this.points[0].x, this.points[0].y ));
+
+      for (let i=0; i<(this.points.length-1)/2; i++) {
+        //$('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.quadraticCurveTo( %d, %d, %d, %d );\n", this.points[(i*2)+2].x, this.points[(i*2)+2].y, this.points[(i*2)+1].x, this.points[(i*2)+1].y ))
+        this.textArea.value = this.textArea.value+`context.quadraticCurveTo(${this.points[(i*2)+2].x}, ${this.points[(i*2)+2].y}, ${this.points[(i*2)+1].x}, ${this.points[(i*2)+1].y});\n`;
+      }
+
+      //$('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.fill(  );\n" ))
+      //$('#editorTextArea').val($('#editorTextArea').val()+sprintf( "context.stroke(  );\n\n" ))
+      this.textArea.value = this.textArea.value+`context.fill();\n`;
+      this.textArea.value = this.textArea.value+`context.stroke();\n\n`;
+
+      this.quadratic_stage = 0
+      this.fill_flag = 0
+      //this.canvas.addEventListener('click', canvas_click_handler, false );
+
     }
   }
 
