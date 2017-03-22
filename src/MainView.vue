@@ -174,7 +174,7 @@ export default {
       canvas: null,
       context: null,
       image_buffer: null,
-      fill_change_buffer: null,
+      fill_chain_buffer: null,
       stroke_mode: "0",
       fill_mode: "1",
       drawing: false,
@@ -439,12 +439,12 @@ export default {
     resetToLastFrame() {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.putImageData(this.image_buffer, 0, 0);
-      this.context.beginPath()
+      //this.context.beginPath()
     },
     onBodyClick(ev) {
       let id = ev.target.id
-      console.log('methods', 'onBodyClick', 'id', id, 'quadratic_stage', this.quadratic_stage, 'fill_mode', this.fill_mode)
       if (id !== 'editorCanvas' && id !== 'clear' && id !== 'execute') {
+        console.log('methods', 'onBodyClick', 'id', id, 'quadratic_stage', this.quadratic_stage, 'fill_mode', this.fill_mode)
         this.resetToLastFrame() 
         this.quadraticActivated = false
         this.points = []
@@ -507,61 +507,69 @@ export default {
     highlightOrigin(ev) {
       //console.log('methods', 'highlightOrigin', 'ev', ev)
 
-        let x, y
-        let length = this.points.length
+      let x, y
+      let length = this.points.length
 
-        if (ev.layerX || ev.layerX == 0) {
-          x = ev.layerX;
-          y = ev.layerY;
-        } else if (ev.offsetX || ev.offsetX == 0) {
-          x = ev.offsetX;
-          y = ev.offsetY;
-        }
+      if (this.points[0] === undefined) {
+        this.points = []
+        this.canvas.removeEventListener('mousemove', this.highlightOrigin, false)
+        return
+      }
+
+      if (ev.layerX || ev.layerX == 0) {
+        x = ev.layerX;
+        y = ev.layerY;
+      } else if (ev.offsetX || ev.offsetX == 0) {
+        x = ev.offsetX;
+        y = ev.offsetY;
+      }
 
       //console.log('methods', 'highlightOrigin', 'x', x, 'y', y)
 
-        if (Math.abs(x - this.points[0].x) < 5 && Math.abs(y - this.points[0].y) < 5) {
-          this.context.beginPath()
-            this.context.arc(this.points[0].x, this.points[0].y, 3, 0, 2*Math.PI, true)
-            this.context.fill()
-            this.context.stroke()
-            this.fill_flag = 1
-            this.adj_x = this.points[0].x
-            this.adj_y = this.points[0].y
-        } else {
-          this.resetToLastFrame()
-          this.fill_flag = 0
-        }
+      if (Math.abs(x - this.points[0].x) < 7 && Math.abs(y - this.points[0].y) < 7) {
+        this.context.beginPath()
+        this.context.arc(this.points[0].x, this.points[0].y, 3, 0, 2*Math.PI, true)
+        this.context.fill()
+        this.context.stroke()
+        this.fill_flag = 1
+        this.adj_x = this.points[0].x
+        this.adj_y = this.points[0].y
+      } else {
+        this.resetToLastFrame()
+        this.fill_flag = 0
+      }
     },
     handleLastStageClick() {
 
-      console.log('methods', 'handleLastStageClick', 'fill_chain_buffer', this.fill_chain_buffer)
+      console.log('methods', 'handleLastStageClick', 'points', this.points, 'stroke_mode', this.stroke_mode)
 
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.putImageData(this.fill_chain_buffer, 0, 0)
 
       this.context.beginPath()
       this.context.moveTo(this.points[0].x, this.points[0].y)
+      console.log('this.points[0], x, y', this.points[0].x, this.points[0].y)
 
-      for (let i=0; i<(this.points.length-1)/2; i++) {
-        this.context.quadraticCurveTo( 
-          this.points[(i*2)+2].x,
-          this.points[(i*2)+2].y,
-          this.points[(i*2)+1].x,
-          this.points[(i*2)+1].y 
-        )
+      if (this.stroke_mode == 2) {
+        for (let i=0; i<(this.points.length-1)/2; i++) {
+          this.context.quadraticCurveTo( 
+            this.points[(i*2)+2].x,
+            this.points[(i*2)+2].y,
+            this.points[(i*2)+1].x,
+            this.points[(i*2)+1].y 
+          )
+        }
+      } else if (this.stroke_mode == 0 && this.points.length > 1) {
+        for (let i=0; i<this.points.length; i++) {
+          console.log('this.points[i], x, y', this.points[i].x, this.points[i].y)
+          this.context.lineTo(this.points[i].x, this.points[i].y) 
+          this.context.fill()
+          this.context.stroke()
+        }
       }
 
       if (this.fill_mode == 2) {
         this.context.fillStyle = this.fill_gradient
-        /*
-        this.fill_gradient = this.context.createLinearGradient( 
-            this.gradient_point_1.x, 
-            this.gradient_point_1.y, 
-            this.gradient_point_2.x,
-            this.gradient_point_2.y
-        )
-        */
 
         this.textArea.value = this.textArea.value+`\nlet gradient = context.createLinearGradient(${this.gradient_point_1.x}, ${this.gradient_point_1.y}, ${this.gradient_point_2.x}, ${this.gradient_point_2.y});\n`;
         for (let i=0; i<this.gradient_stops.length; i++) {
@@ -574,24 +582,28 @@ export default {
         }
         this.textArea.value = this.textArea.value+`context.fillStyle = gradient;\n`;
 
+        this.context.fill()
+        this.context.stroke()
       }
 
-      this.context.fill()
-      this.context.stroke()
+      if (this.stroke_mode == 2) {
+        this.textArea.value = this.textArea.value+`\ncontext.beginPath();\n`;
+        this.textArea.value = this.textArea.value+`context.moveTo(${this.points[0].x}, ${this.points[0].y});\n`;
 
-      this.textArea.value = this.textArea.value+`\ncontext.beginPath();\n`;
-      this.textArea.value = this.textArea.value+`context.moveTo(${this.points[0].x}, ${this.points[0].y});\n`;
+        for (let i=0; i<(this.points.length-1)/2; i++) {
+          this.textArea.value = this.textArea.value+`context.quadraticCurveTo(${this.points[(i*2)+2].x}, ${this.points[(i*2)+2].y}, ${this.points[(i*2)+1].x}, ${this.points[(i*2)+1].y});\n`;
+        }
 
-      for (let i=0; i<(this.points.length-1)/2; i++) {
-        this.textArea.value = this.textArea.value+`context.quadraticCurveTo(${this.points[(i*2)+2].x}, ${this.points[(i*2)+2].y}, ${this.points[(i*2)+1].x}, ${this.points[(i*2)+1].y});\n`;
+        this.textArea.value = this.textArea.value+`context.fill();\n`;
+        this.textArea.value = this.textArea.value+`context.stroke();\n`;
+      } else if (this.stroke_mode == 0) {
+        //this.context.beginPath()        
       }
-
-      this.textArea.value = this.textArea.value+`context.fill();\n`;
-      this.textArea.value = this.textArea.value+`context.stroke();\n`;
 
       this.quadratic_stage = 0
       this.fill_flag = 0
       this.pickingGradient = false
+      this.started = false
       //this.canvas.addEventListener('click', canvas_click_handler, false );
 
     },
@@ -618,7 +630,7 @@ export default {
 
       if (this.gradient_stage == 0) {
         this.context.beginPath()
-        this.context.arc(x, y, 2, 0, 2*Math.PI, true)
+        this.context.arc(x, y, 3, 0, 2*Math.PI, true)
         this.context.fill()
         this.context.stroke()
 

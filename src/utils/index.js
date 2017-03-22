@@ -7,10 +7,13 @@ export const lineStageOne = function ({ obj, x, y }) {
 
   console.log('lineStageONE', 'obj', obj, 'x', x, 'y', y)
 
+  obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
+
   obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)
+  obj.fill_chain_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)
 
   obj.context.beginPath()
-  obj.context.arc(x, y, 2, 0, 2*Math.PI, true)
+  obj.context.arc(x, y, 3, 0, 2*Math.PI, true)
   obj.context.fill()
   obj.context.stroke()
 
@@ -24,17 +27,24 @@ export const lineStageOne = function ({ obj, x, y }) {
 
   obj.straightCount = 0
 
+  obj.points = []
+  obj.points.push(new Point(x, y))
+
 }
 
 export const lineStageTwo = function ({ obj, x, y }) {
 
-  console.log('lineStageTWO', 'obj', obj, 'x', x, 'y', y)
+  console.log('lineStageTWO', 'straightCount', obj.straightCount, 'useFill', obj.useFill, 'x', x, 'y', y)
+  console.log('lineStageTWO', 'fill_mode', obj.fill_mode, 'fill_flag', obj.fill_flag)
 
   if (obj.straightCount == 0) {
     obj.context.putImageData(obj.image_buffer, 0, 0)
   }
 
   obj.context.lineTo(x, y);
+  if (obj.useFill) {
+    obj.context.fill();
+  }
   obj.context.stroke();
 
   if (!obj.connectLines) {
@@ -43,10 +53,43 @@ export const lineStageTwo = function ({ obj, x, y }) {
     obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)		
   }
   
-  obj.textArea.value = obj.textArea.value+`context.lineTo(${x}, ${y});\n`
+  if (obj.fill_flag == 0) {
+    obj.textArea.value = obj.textArea.value+`context.lineTo(${x}, ${y});\n`
+  } else {
+    obj.textArea.value = obj.textArea.value+`context.lineTo(${obj.points[0].x}, ${obj.points[0].y});\n`
+  }
+  
+  if (obj.useFill) {
+    obj.textArea.value = obj.textArea.value+`context.fill();\n`
+  }
   obj.textArea.value = obj.textArea.value+`context.stroke();\n`
 
   obj.straightCount++
+
+  if (obj.connectLines && obj.useFill) {
+    if (obj.fill_mode == 1) {
+      if (obj.fill_flag == 0) {
+        obj.points.push(new Point(x, y))
+        obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
+      } else if (obj.fill_flag == 1) {
+        obj.points.push(new Point(obj.points[0].x, obj.points[0].y))
+        obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
+        obj.handleLastStageClick()
+      }
+    } else if (obj.fill_mode == 2) {
+      if (obj.fill_flag == 0) {
+        obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
+      } else if (obj.fill_flag == 1) {
+        obj.gradient_stage = 0
+        obj.pickingGradient = true
+        obj.canvas.addEventListener('click', obj.pickGradientDirection, false)
+      }
+    }
+  }
+
+  for (let i=0; i<obj.points.length; i++) {
+    console.log('utils', 'lineStageTwo', 'points', obj.points[i].x, obj.points[i].y)
+  }
 
 }
 
@@ -55,7 +98,6 @@ export const quadraticStageOne = function ({ obj, x, y }) {
   console.log('quadraticStageONE', 'obj', obj, 'x', x, 'y', y, 'fill_mode', obj.fill_mode, 'points', obj.points)
 
   obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)
-  obj.fill_chain_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)		
 
   let len = obj.points.length
   for (let i=0; i<len; i++ ) {
@@ -63,7 +105,7 @@ export const quadraticStageOne = function ({ obj, x, y }) {
   }
 
   obj.context.beginPath()
-  obj.context.arc(x, y, 2, 0, 2*Math.PI, true)
+  obj.context.arc(x, y, 3, 0, 2*Math.PI, true)
   obj.context.fill()
   obj.context.stroke()
 
