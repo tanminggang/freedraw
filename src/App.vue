@@ -30,7 +30,7 @@ export default {
 }
 
 #editorCanvas {
-  background-color: #bbbbbb;
+  background-color: #dddddd;
   cursor: crosshair;
   position: relative;
 }
