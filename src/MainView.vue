@@ -269,7 +269,7 @@ export default {
       }
 
       this.textArea = document.getElementById('editorTextArea')
-      this.textArea.value = `let canvas = document.getElementById('editorCanvas');\nlet context = canvas.getContext('2d');\n\ncontext.lineWidth = 1;\n\ncontext.strokeStyle = '${this.lineColor.hex}';\ncontext.fillStyle = '${this.fillColor.hex}';\n`
+      this.textArea.value = `let canvas = document.getElementById('editorCanvas');\nlet context = canvas.getContext('2d');\nlet gradient;\n\ncontext.lineWidth = 1;\n\ncontext.strokeStyle = '${this.lineColor.hex}';\ncontext.fillStyle = '${this.fillColor.hex}';\n`
 
       this.context.lineWidth = 1
       this.image_buffer = this.context.createImageData(this.canvas.width, this.canvas.height)
@@ -313,14 +313,13 @@ export default {
     },
     onCanvasMouseMove(ev) {
       if (this.stroke_mode != 1 || !this.drawing) {
-        //console.log('MainView', 'methods', 'onCanvasMouseMove', 'quadraticActivated', this.quadraticActivated)
         if (this.quadraticActivated) {
           quadraticMoveStage({ obj: this, ev })
         }
         return
       }
 
-      console.log('methods', 'onCanvasMouseMove')
+      console.log('onCanvasMouseMove')
 
       let x = ev.pageX - this.canvasLeft
       let y = ev.pageY - this.canvasTop
@@ -389,6 +388,7 @@ export default {
         return
       }
 
+      console.log('')
       console.log('methods', 'onCanvasClick', 'stroke_mode', this.stroke_mode, 'started', this.started)
       console.log('methods', 'onCanvasClick', 'quadratic_stage', this.quadratic_stage)
       console.log('methods', 'onCanvasClick', 'fill_mode', this.fill_mode, 'fill_flag', this.fill_flag)
@@ -425,11 +425,6 @@ export default {
               quadraticStageThree({ obj: this, x, y })
               break
           }
-
-          //this.image_buffer = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height)		
-          //this.canvas.removeEventListener('mousemove', this.canvas_quadratic_modify, false)
-          //this.quadraticActivated = false
-          //console.log('quadraticActivated', this.quadraticActivated)
           break
       }
     },
@@ -437,6 +432,8 @@ export default {
       console.log('MainView', 'methods', 'onFillCheckboxClick', fill_picker)
     },
     resetToLastFrame() {
+      console.log('methods', 'resetToLastFrame')
+      return
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.putImageData(this.image_buffer, 0, 0);
       //this.context.beginPath()
@@ -470,6 +467,7 @@ export default {
       this.gradientContext.fillRect(0, 0, this.gradientCanvas.width, this.gradientCanvas.height)
     },
     canvasQuadraticModify(ev) {
+
       var x, y;
       var length = this.points.length;
 
@@ -481,7 +479,7 @@ export default {
         y = ev.offsetY;
       }
 
-      //console.log('methods', 'canvasQuadraticModify', 'x', x, 'y', y)
+      console.log('canvasQuadraticModify')
 
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.context.putImageData(this.image_buffer, 0, 0)
@@ -505,7 +503,7 @@ export default {
       }
     },
     highlightOrigin(ev) {
-      //console.log('methods', 'highlightOrigin', 'ev', ev)
+      console.log('methods', 'highlightOrigin')
 
       let x, y
       let length = this.points.length
@@ -531,7 +529,9 @@ export default {
         this.context.arc(this.points[0].x, this.points[0].y, 3, 0, 2*Math.PI, true)
         this.context.fill()
         this.context.stroke()
+
         this.fill_flag = 1
+
         this.adj_x = this.points[0].x
         this.adj_y = this.points[0].y
       } else {
@@ -563,15 +563,17 @@ export default {
         for (let i=0; i<this.points.length; i++) {
           console.log('this.points[i], x, y', this.points[i].x, this.points[i].y)
           this.context.lineTo(this.points[i].x, this.points[i].y) 
-          this.context.fill()
-          this.context.stroke()
+          if (i == this.points.length-1) {
+            this.context.fill()
+            this.context.stroke()
+          }
         }
       }
 
       if (this.fill_mode == 2) {
         this.context.fillStyle = this.fill_gradient
 
-        this.textArea.value = this.textArea.value+`\nlet gradient = context.createLinearGradient(${this.gradient_point_1.x}, ${this.gradient_point_1.y}, ${this.gradient_point_2.x}, ${this.gradient_point_2.y});\n`;
+        this.textArea.value = this.textArea.value+`\ngradient = context.createLinearGradient(${this.gradient_point_1.x}, ${this.gradient_point_1.y}, ${this.gradient_point_2.x}, ${this.gradient_point_2.y});\n`;
         for (let i=0; i<this.gradient_stops.length; i++) {
           if (i == 0) {
             this.textArea.value = this.textArea.value+`gradient.addColorStop(0.0, '${this.gradient_stops[0]}');\n`;
@@ -580,7 +582,7 @@ export default {
             this.textArea.value = this.textArea.value+`gradient.addColorStop(${i*(1.0/(this.gradient_stops.length-1))}, '${this.gradient_stops[1]}');\n`;
           }
         }
-        this.textArea.value = this.textArea.value+`context.fillStyle = gradient;\n`;
+        this.textArea.value = this.textArea.value+`context.fillStyle = gradient;\n\n`;
 
         this.context.fill()
         this.context.stroke()
@@ -594,11 +596,10 @@ export default {
           this.textArea.value = this.textArea.value+`context.quadraticCurveTo(${this.points[(i*2)+2].x}, ${this.points[(i*2)+2].y}, ${this.points[(i*2)+1].x}, ${this.points[(i*2)+1].y});\n`;
         }
 
-        this.textArea.value = this.textArea.value+`context.fill();\n`;
-        this.textArea.value = this.textArea.value+`context.stroke();\n`;
-      } else if (this.stroke_mode == 0) {
-        //this.context.beginPath()        
       }
+
+      this.textArea.value = this.textArea.value+`context.fill();\n`;
+      this.textArea.value = this.textArea.value+`context.stroke();\n`;
 
       this.quadratic_stage = 0
       this.fill_flag = 0
@@ -611,7 +612,7 @@ export default {
 
       console.log('editor', 'pick_gradient_direction', 'fill_mode', this.fill_mode)
 
-      if (this.fill_mode != 2) {
+      if (!this.useFill || !this.connectLines || this.fill_mode == 1) {
         return
       }
 

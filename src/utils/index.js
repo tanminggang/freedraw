@@ -5,7 +5,7 @@ function Point( x, y ) {
 
 export const lineStageOne = function ({ obj, x, y }) {
 
-  console.log('lineStageONE', 'obj', obj, 'x', x, 'y', y)
+  console.log('lineStageONE', 'straightCount', obj.straightCount, 'useFill', obj.useFill, 'x', x, 'y', y)
 
   obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
 
@@ -41,15 +41,39 @@ export const lineStageTwo = function ({ obj, x, y }) {
     obj.context.putImageData(obj.image_buffer, 0, 0)
   }
 
-  obj.context.lineTo(x, y);
-  if (obj.useFill) {
+  if (obj.fill_flag == 0) {
+    obj.points.push(new Point(x, y))
+
+    console.log('lineTo', x, y, 'stroke')
+    obj.context.lineTo(x, y)
+    obj.context.stroke()
+  } else {
+    console.log('lineTo', obj.points[0].x, obj.points[0].y, 'finalStroke')
+
+    obj.points.push(new Point(obj.points[0].x, obj.points[0].y))
+
+    if (obj.stroke_mode == 0) {
+      obj.context.beginPath()
+      obj.context.moveTo(obj.points[0].x, obj.points[0].y)
+
+      for (let i=0; i<obj.points.length; i++) {
+        console.log('obj.points[i], x, y', obj.points[i].x, obj.points[i].y)
+        obj.context.lineTo(obj.points[i].x, obj.points[i].y) 
+        if (i == obj.points.length-1) {
+          obj.context.stroke()
+        }
+      }
+    }
+  }
+
+  if (obj.useFill && obj.fill_mode == 1) {
     obj.context.fill();
   }
-  obj.context.stroke();
 
   if (!obj.connectLines) {
     obj.started = false;
   } else {
+    console.log('lineStageTwo', 'getImageData') 
     obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)		
   }
   
@@ -59,20 +83,17 @@ export const lineStageTwo = function ({ obj, x, y }) {
     obj.textArea.value = obj.textArea.value+`context.lineTo(${obj.points[0].x}, ${obj.points[0].y});\n`
   }
   
-  if (obj.useFill) {
-    obj.textArea.value = obj.textArea.value+`context.fill();\n`
+  if (!obj.connectLines) {
+    obj.textArea.value = obj.textArea.value+`context.stroke();\n`
   }
-  obj.textArea.value = obj.textArea.value+`context.stroke();\n`
 
   obj.straightCount++
 
   if (obj.connectLines && obj.useFill) {
     if (obj.fill_mode == 1) {
       if (obj.fill_flag == 0) {
-        obj.points.push(new Point(x, y))
         obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
       } else if (obj.fill_flag == 1) {
-        obj.points.push(new Point(obj.points[0].x, obj.points[0].y))
         obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
         obj.handleLastStageClick()
       }
@@ -80,6 +101,8 @@ export const lineStageTwo = function ({ obj, x, y }) {
       if (obj.fill_flag == 0) {
         obj.canvas.addEventListener('mousemove', obj.highlightOrigin, false)
       } else if (obj.fill_flag == 1) {
+        obj.canvas.removeEventListener('mousemove', obj.highlightOrigin, false)
+
         obj.gradient_stage = 0
         obj.pickingGradient = true
         obj.canvas.addEventListener('click', obj.pickGradientDirection, false)
@@ -98,6 +121,7 @@ export const quadraticStageOne = function ({ obj, x, y }) {
   console.log('quadraticStageONE', 'obj', obj, 'x', x, 'y', y, 'fill_mode', obj.fill_mode, 'points', obj.points)
 
   obj.image_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)
+  obj.fill_chain_buffer = obj.context.getImageData(0, 0, obj.canvas.width, obj.canvas.height)
 
   let len = obj.points.length
   for (let i=0; i<len; i++ ) {
