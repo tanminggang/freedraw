@@ -45,18 +45,6 @@ module.exports = {
         include: path.resolve(__dirname, './'),
         exclude: /node_modules/
       },
-      {
-        test: /\.html$/,
-        loader: 'vue-html-loader'
-      },
-      {
-        test: /\.css$/,
-        loader: 'vue-style-loader'
-      },
-      {
-        test: /\.sass$/,
-        loader: 'vue-style-loader',
-      }
     ],
   },
   plugins: [

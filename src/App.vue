@@ -21,9 +21,8 @@ export default {
 }
 </script>
 
-<style lang="sass">
-@import '~bulma';
-
+<style src="bulma/css/bulma.css"></style>
+<style>
 #gradientCanvas {
   background-color: #ffffff;
   position: relative;
