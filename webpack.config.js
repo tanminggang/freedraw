@@ -2,8 +2,6 @@
 
 var path = require('path')
 
-let utils = require('./utils')
-
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
@@ -30,8 +28,6 @@ module.exports = {
     ],
     alias: {
       'src': path.resolve(__dirname, './src'),
-      'assets': path.resolve(__dirname, './src/assets'),
-      'components': path.resolve(__dirname, './src/components')
     }
   },
   resolveLoader: {
@@ -54,25 +50,15 @@ module.exports = {
         loader: 'vue-html-loader'
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
-        }
+        test: /\.css$/,
+        loader: 'vue-style-loader'
       },
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-          name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
-        }
+        test: /\.sass$/,
+        loader: 'vue-style-loader',
       }
     ],
-    loaders: utils.styleLoaders()
   },
-  devtool: '#eval-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
@@ -81,9 +67,6 @@ module.exports = {
       favicon: ''
     })
   ],
-  performance: {
-    hints: false
-  }
 }
 
 console.log('webpack.config.js', 'module.exports', module.exports)
